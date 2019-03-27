@@ -315,17 +315,16 @@ void Mariai::analyze_pt(Board &b, int mode) {
 
 void Mariai::find_pt_inline(Board &b, int i, int j, int di, int dj, int mode) { 
     if ( mode == 0 ) {
-        find_pt_each(b, i, j, di, dj, "sa"  );
+        find_pt_each(b, i, j, di, dj, "sa"    );
     } else if ( mode == 1 ) {
-        find_pt_each(b, i, j, di, dj, "x=a" ) ||
-        find_pt_each(b, i, j, di, dj, "xxa" ) ||
-        find_pt_each(b, i, j, di, dj, "ooa" ) ||
-        find_pt_each(b, i, j, di, dj, "xax" ) ||
-        find_pt_each(b, i, j, di, dj, "oao" ) ||
-        find_pt_each(b, i, j, di, dj, "o=oa") ||
-        find_pt_each(b, i, j, di, dj, "x=xa") ||
-        find_pt_each(b, i, j, di, dj, "xx_a") ||
-        find_pt_each(b, i, j, di, dj, "oo_a");
+        find_pt_each(b, i, j, di, dj, "xxa"   ) ||
+        find_pt_each(b, i, j, di, dj, "ooa"   ) ||
+        find_pt_each(b, i, j, di, dj, "xax"   ) ||
+        find_pt_each(b, i, j, di, dj, "oao"   ) ||
+        find_pt_each(b, i, j, di, dj, "x=a"   ) ||
+        find_pt_each(b, i, j, di, dj, "o=a"   ) ||
+        find_pt_each(b, i, j, di, dj, "xooo_a") ||
+        find_pt_each(b, i, j, di, dj, "oxxx_a");
     } 
 }
 

@@ -24,11 +24,11 @@ using namespace std;
 #define WP             10
 #define BCF            1
 #define NPLAY          1000000
-#define NEXP           40
-#define UCB_C          0.3
+#define NEXP           5
+#define UCB_C          0.4
 #define UCB_POW        0.5
 #define UCB_C0         (log(NPLAY))
-#define RATIO_FD       50
+#define RATIO_FD       20
 
 #define RUN            1
 #define PRINT_TREE     0

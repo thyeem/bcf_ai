@@ -157,7 +157,7 @@ void Draw::dump_msg(const char* msg) {
 }
 
 void Draw::dump_ewp(double ewp) {
-    mvprintw((LINES-N)/2 - 1, (COLS-2*N)/2, "%s: %s - %.1f%%", "Message", "EWP", ewp);
+    mvprintw((LINES-N)/2 - 1, (COLS-2*N)/2, "%s: %s - %.1f%%", "Message", "EWP(Mariai Odds)", ewp);
     refresh();
     wrefresh(win);
 }
