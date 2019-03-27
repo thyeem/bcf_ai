@@ -279,12 +279,13 @@ void Mariai::print_tree(Node* node, int sw) {
 //=======================================================================
 
 void Mariai::gen_candy(Board &b) {
-    VTii   sweet;
+    VTii sweet;
     candy.clear();
     analyze_pt(b, 1);
-    if ( b.moves < 20 && 
-         candy.size() < 10 ) analyze_pt(b, 0);
-    if ( !candy.size() )     analyze_pt(b, 2);
+    //if ( b.moves < 10 && candy.size() <= 5 ) analyze_pt(b, 0);
+    //if ( !candy.size() ) analyze_pt(b, 2);
+    if ( b.moves < 10) analyze_pt(b, 0);
+    if ( !candy.size() ) analyze_pt(b, 2);
 
     for ( auto q : candy ) {
         int i = get<0>(q);
@@ -312,11 +313,12 @@ void Mariai::analyze_pt(Board &b, int mode) {
     uniq_vec(candy);
 }
 
-void Mariai::find_pt_inline(Board &b, int i, int j, 
-                     int di, int dj, int mode) { 
+void Mariai::find_pt_inline(Board &b, int i, int j, int di, int dj, int mode) { 
     if ( mode == 0 ) {
-        find_pt_each(b, i, j, di, dj, "x=a"  ) ||
-        find_pt_each(b, i, j, di, dj, "o=a"  );
+        string s = ( b.whose_turn() == BLACK ) ? "o" : "x";
+        find_pt_each(b, i, j, di, dj, s+"=a"  );
+        //find_pt_each(b, i, j, di, dj, "x=a"  ) ||
+        //find_pt_each(b, i, j, di, dj, "o=a"  );
     } else if ( mode == 1 ) {
         find_pt_each(b, i, j, di, dj, "xax"  ) ||
         find_pt_each(b, i, j, di, dj, "oao"  );
@@ -326,15 +328,14 @@ void Mariai::find_pt_inline(Board &b, int i, int j,
         find_pt_each(b, i, j, di, dj, "o_oa" ) ||
         find_pt_each(b, i, j, di, dj, "xx_a" ) ||
         find_pt_each(b, i, j, di, dj, "oo_a" );
-        find_pt_each(b, i, j, di, dj, "x+"   ) ||
-        find_pt_each(b, i, j, di, dj, "o+"   );
+        //find_pt_each(b, i, j, di, dj, "x+"   ) ||
+        //find_pt_each(b, i, j, di, dj, "o+"   );
     } else if ( mode == 2 ) {
-        find_pt_each(b, i, j, di, dj, "sa"   );
+        find_pt_each(b, i, j, di, dj, "oa"   );
     }
 }
 
-bool Mariai::find_pt_each(Board &b, int i, int j, 
-                            int di, int dj, string pt) {
+bool Mariai::find_pt_each(Board &b, int i, int j, int di, int dj, string pt) {
     int size = pt.length();
     char q = pt[0];
     char e = ( q == 'o' ) ? 'x' :
@@ -342,7 +343,7 @@ bool Mariai::find_pt_each(Board &b, int i, int j,
     for ( int s = 0; s < size; s++ ) {
         int x = i + s * di;
         int y = j + s * dj;
-        if ( !b.in_range(x, y) )             return false;
+        if ( !b.in_range(x, y) ) return false;
         if ( !match_stones(b, pt[s], x, y) ) return false;
 
         if ( pt[s] == '=' ) {
@@ -350,8 +351,8 @@ bool Mariai::find_pt_each(Board &b, int i, int j,
             int found = 0;
             for ( int l = -1; l <= 1; l++ ) {
                 for ( int m = -1; m <= 1; m++ ) {
-                    if ( !b.in_range(x+l, y+m) )        continue;
-                    if ( on_main_axis(l, m, di, dj) )   continue;
+                    if ( !b.in_range(x+l, y+m) ) continue;
+                    if ( on_main_axis(l, m, di, dj) ) continue;
                     if ( match_stones(b, e, x+l, y+m) ) found++; 
                 }
             }
@@ -362,14 +363,14 @@ bool Mariai::find_pt_each(Board &b, int i, int j,
             if ( di * dj != 0 ) return false;
             for ( int l = -1; l <= 1; l++ ) {
                 for ( int m = -1; m <= 1; m++ ) {
-                    if ( !b.in_range(x+l, y+m) )         continue;
+                    if ( !b.in_range(x+l, y+m) ) continue;
                     if ( on_main_axis(l, m, di, dj) &&
                          !match_stones(b, q, x+l, y+m) ) return false;
                 }
             }
             for ( int l = -1; l <= 1; l++ ) {
                 for ( int m = -1; m <= 1; m++ ) {
-                    if ( !b.in_range(x+l, y+m) )         continue;
+                    if ( !b.in_range(x+l, y+m) ) continue;
                     if ( !on_main_axis(l, m, di, dj) &&
                          b.get_stone(x+l, y+m) == EMPTY ) 
                         candy.push_back(make_tuple(x+l, y+m));

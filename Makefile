@@ -26,7 +26,7 @@ $(BIN): $(OBJ)
 .PHONY: f fresh 
 f: fresh
 fresh: all
-	-rm $(OBJ) $(DEP)
+	-rm -rf $(OBJ) $(DEP)
 
 .PHONY: r run 
 r: run
@@ -38,5 +38,5 @@ run: fresh
 .PHONY: c clean
 c: clean
 clean:
-	-rm $(BIN) $(OBJ) $(DEP)
+	-rm -rf $(BIN) $(OBJ) $(DEP)
 
