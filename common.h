@@ -50,13 +50,13 @@ using namespace std;
 
 #define TC_RESET       "\033[0m"
 #define TC_BLACK       "\033[30m"
-#define TC_RED         "\033[31m"
-#define TC_GREEN       "\033[32m"
-#define TC_YELLOW      "\033[33m"
-#define TC_BLUE        "\033[34m"
-#define TC_MAGENTA     "\033[35m"
-#define TC_CYAN        "\033[36m"
-#define TC_WHITE       "\033[37m"
+#define TC_RED         "\033[91m"
+#define TC_GREEN       "\033[92m"
+#define TC_YELLOW      "\033[93m"
+#define TC_BLUE        "\033[94m"
+#define TC_MAGENTA     "\033[95m"
+#define TC_CYAN        "\033[96m"
+#define TC_WHITE       "\033[97m"
 #define TC_CLEAR       "\033[2J"
 
 enum      Stone  { EMPTY, BLACK, WHITE, CANDY };

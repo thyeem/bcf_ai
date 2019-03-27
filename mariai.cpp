@@ -282,10 +282,10 @@ void Mariai::gen_candy(Board &b) {
     VTii sweet;
     candy.clear();
     analyze_pt(b, 1);
-    //if ( b.moves < 10 && candy.size() <= 5 ) analyze_pt(b, 0);
-    //if ( !candy.size() ) analyze_pt(b, 2);
-    if ( b.moves < 10) analyze_pt(b, 0);
-    if ( !candy.size() ) analyze_pt(b, 2);
+    if ( !candy.size() ) {
+        candy.clear();
+        analyze_pt(b, 0);
+    }
 
     for ( auto q : candy ) {
         int i = get<0>(q);
@@ -315,24 +315,18 @@ void Mariai::analyze_pt(Board &b, int mode) {
 
 void Mariai::find_pt_inline(Board &b, int i, int j, int di, int dj, int mode) { 
     if ( mode == 0 ) {
-        string s = ( b.whose_turn() == BLACK ) ? "o" : "x";
-        find_pt_each(b, i, j, di, dj, s+"=a"  );
-        //find_pt_each(b, i, j, di, dj, "x=a"  ) ||
-        //find_pt_each(b, i, j, di, dj, "o=a"  );
+        find_pt_each(b, i, j, di, dj, "sa"  );
     } else if ( mode == 1 ) {
-        find_pt_each(b, i, j, di, dj, "xax"  ) ||
-        find_pt_each(b, i, j, di, dj, "oao"  );
-        find_pt_each(b, i, j, di, dj, "xxa"  ) ||
-        find_pt_each(b, i, j, di, dj, "ooa"  );
-        find_pt_each(b, i, j, di, dj, "x_xa" ) ||
-        find_pt_each(b, i, j, di, dj, "o_oa" ) ||
-        find_pt_each(b, i, j, di, dj, "xx_a" ) ||
-        find_pt_each(b, i, j, di, dj, "oo_a" );
-        //find_pt_each(b, i, j, di, dj, "x+"   ) ||
-        //find_pt_each(b, i, j, di, dj, "o+"   );
-    } else if ( mode == 2 ) {
-        find_pt_each(b, i, j, di, dj, "oa"   );
-    }
+        find_pt_each(b, i, j, di, dj, "x=a" ) ||
+        find_pt_each(b, i, j, di, dj, "xxa" ) ||
+        find_pt_each(b, i, j, di, dj, "ooa" ) ||
+        find_pt_each(b, i, j, di, dj, "xax" ) ||
+        find_pt_each(b, i, j, di, dj, "oao" ) ||
+        find_pt_each(b, i, j, di, dj, "o=oa") ||
+        find_pt_each(b, i, j, di, dj, "x=xa") ||
+        find_pt_each(b, i, j, di, dj, "xx_a") ||
+        find_pt_each(b, i, j, di, dj, "oo_a");
+    } 
 }
 
 bool Mariai::find_pt_each(Board &b, int i, int j, int di, int dj, string pt) {
