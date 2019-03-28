@@ -36,7 +36,7 @@ using namespace std;
 #define AI_QUIZ        0
 #define QUIZ_NUM       4
 #define MATCH_NUM      300
-#define PUT_CANDY      1
+#define PUT_CANDY      0
 #define PUT_BOARD      1
 
 #define PBWIDTH        33
