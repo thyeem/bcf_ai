@@ -26,7 +26,7 @@ using namespace std;
 #define NPLAY          1000000
 #define NEXP           5
 #define UCB_C          0.4
-#define UCB_POW        0.5
+#define UCB_POW        0.6
 #define UCB_C0         (log(NPLAY))
 #define RATIO_FD       20
 
