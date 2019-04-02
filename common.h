@@ -24,11 +24,12 @@ using namespace std;
 #define WP             10
 #define BCF            1
 #define NPLAY          1000000
-#define NEXP           5
-#define UCB_C          0.4
-#define UCB_POW        0.6
+#define NEXP           1
+#define UCB_C          1.0
+#define UCB_POW        0.5
 #define UCB_C0         (log(NPLAY))
 #define RATIO_FD       20
+#define VALUE_FD       (NPLAY * 0.2)
 
 #define RUN            1
 #define PRINT_TREE     0
@@ -36,13 +37,13 @@ using namespace std;
 #define AI_QUIZ        0
 #define QUIZ_NUM       4
 #define MATCH_NUM      300
-#define PUT_CANDY      0
+#define PUT_CANDY      1
 #define PUT_BOARD      1
 
 #define PBWIDTH        33
 #define PBSTR          "||||||||||||||||||||||||||||||||||||||||"
 #define LINE_BUFFER    (NPLAY / 6)
-#define FREQ_FD        (NPLAY / 4)
+#define FREQ_FD        (NPLAY / 50)
 
 // Sofiai's parameter
 #define INF            1.0e7

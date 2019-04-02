@@ -147,8 +147,8 @@ void Mariai::run_mcts(Node* node, Board &b) {
         // BACKUP: backpropagation
         backpropagation(head, vg.whose_turn());
         itr++;
-        if ( make_fast_decision(node) ) return;
         show_progress();
+        if ( make_fast_decision(node) ) return;
     }
 }
 
@@ -225,12 +225,11 @@ void Mariai::backpropagation(Node* node, Stone turn) {
 
 bool Mariai::make_fast_decision(Node* node) {
     if ( itr % FREQ_FD != 0 ) return false;
-
-    vector<size_t> iv = sort_icV(node);
-    if ( node->child[iv[0]].visit > RATIO_FD * node->child[iv[1]].visit ) {
-        itr = NPLAY;
-        show_progress();
-        return true;
+    else {
+        vector<size_t> iv = sort_icV(node);
+        if ( node->child[iv[0]].visit > VALUE_FD ) {
+            return true;
+        }
     }
     return false;
 }
