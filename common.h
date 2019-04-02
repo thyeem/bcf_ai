@@ -25,11 +25,13 @@ using namespace std;
 #define BCF            1
 #define NPLAY          1000000
 #define NEXP           1
-#define UCB_C          1.0
+#define UCB_C          0.5
 #define UCB_POW        0.5
 #define UCB_C0         (log(NPLAY))
 #define RATIO_FD       20
 #define VALUE_FD       (NPLAY * 0.2)
+#define PRUNING        500000
+#define PRUNE_RANK     3
 
 #define RUN            1
 #define PRINT_TREE     0

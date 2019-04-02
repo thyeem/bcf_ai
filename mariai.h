@@ -37,6 +37,7 @@ public:
     void                 backpropagation       (Node* node, Stone turn);
     void                 init_tree             (Node* node, Board &b);
     void                 run_mcts              (Node* node, Board &b);
+    void                 prune_tree            (Node* node);
     void                 print_tree            (Node* node, int sw);
     Tii                  pick_best             (Node* node);
     Tii                  next_move             ();
