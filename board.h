@@ -13,14 +13,15 @@ public:
     Player     get_player           (Stone s);
     void       set_player           (Player pB, Player pW);
     bool       is_cur_pos           (int x, int y);
-    void       update_meta          (int x, int y);
+    void       set_cur_pos          (int x, int y);
+    void       calc_density         (int x, int y);
     string     get_nickname         (Stone s);
     void       toggle_turn          ();
     Stone      whose_turn           ();
 
     void       print_board          (bool dump_candy);
     bool       in_range             (int x, int y);
-    int        make_move            (int x, int y, bool qual);
+    int        make_move            (int x, int y, bool rollout);
     bool       check_quit           (int x, int y);
     int        check_quit_inline    (int x, int y, int dx, int dy);
     bool       check_3_3            (int x, int y);
@@ -35,15 +36,12 @@ private:
     Player     playerW;
     int        scoreB;
     int        scoreW;
-
-public: 
     int        cur_x; 
     int        cur_y;
-    int        min_x;
-    int        max_x;
-    int        min_y;
-    int        max_y;
+
+public: 
     int        moves;
+    double     density;
     double     ewp;
     VTii       candy;
 };

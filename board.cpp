@@ -5,11 +5,8 @@ Board::Board() : turn(WHITE),
                  scoreW(0), 
                  cur_x(-1),
                  cur_y(-1),
-                 min_x(N/2),
-                 max_x(N/2),
-                 min_y(N/2),
-                 max_y(N/2),
                  moves(0), 
+                 density(0.),
                  ewp(50.0)
 {
     for ( int i = 0; i < N; i++ ) {
@@ -84,13 +81,23 @@ bool Board::is_cur_pos(int x, int y) {
     return ( x == cur_x && y == cur_y );
 }
 
-void Board::update_meta(int x, int y) {
+void Board::set_cur_pos(int x, int y) {
     cur_x = x;
     cur_y = y;
-    if ( x < min_x ) min_x = x; 
-    if ( x > max_x ) max_x = x; 
-    if ( y < min_y ) min_y = y; 
-    if ( y > max_y ) max_y = y; 
+}
+
+void Board::calc_density(int x, int y) {
+    if ( x * y == 0 || x == N || y == N ) return;
+    density *= (moves - scoreB - scoreW - 1);
+    if ( board[x-1][y-1] != EMPTY ) density++;
+    if ( board[x-1][y+0] != EMPTY ) density++;
+    if ( board[x-1][y+1] != EMPTY ) density++;
+    if ( board[x+0][y-1] != EMPTY ) density++;
+    if ( board[x+0][y+1] != EMPTY ) density++;
+    if ( board[x+1][y-1] != EMPTY ) density++;
+    if ( board[x+1][y+0] != EMPTY ) density++;
+    if ( board[x+1][y+1] != EMPTY ) density++;
+    density /= (moves - scoreB - scoreW);
 }
 
 void Board::toggle_turn() {
@@ -120,14 +127,15 @@ void Board::set_player(Player pB, Player pW) {
     playerW = pW;
 }
 
-int Board::make_move(int x, int y, bool qual) {
+int Board::make_move(int x, int y, bool rollout) {
     if ( board[x][y] != EMPTY ) {
         return 1;
     } else {
-        if ( !qual && check_3_3(x, y) ) return 2;
+        if ( check_3_3(x, y) ) return 2;
         moves++;
         set_stone(x, y, turn);
-        update_meta(x, y);
+        set_cur_pos(x, y);
+        if ( !rollout ) calc_density(x, y);
         if ( BCF ) bite_move(x, y);
         return 0;
     }

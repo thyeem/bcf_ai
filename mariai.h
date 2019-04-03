@@ -12,11 +12,9 @@ public:
     Draw*                gd                    ();
     int                  fastrand              ();
     void                 gen_candy             (Board &b);
-    void                 analyze_pt            (Board &b, int mode);
-    void                 find_pt_inline        (Board &b, int i, int j, 
-                                                int di, int dj, int mode); 
-    bool                 find_pt_each          (Board &b, int i, int j, 
-                                                int di, int dj, string pt); 
+    void                 analyze_pattern       (Board &b, bool nil);
+    void                 find_pattern_inline   (Board &b, int i, int j, int di, int dj, bool nil); 
+    bool                 find_pattern_each     (Board &b, int i, int j, int di, int dj, string pt); 
     bool                 match_stones          (Board &b, char ch, int i, int j);
     bool                 on_main_axis          (int x, int y, int di, int dj);
     bool                 on_crux_wing          (int x, int y, int di, int dj);

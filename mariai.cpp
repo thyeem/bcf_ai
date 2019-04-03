@@ -139,7 +139,7 @@ bool Mariai::move_check_quit_vg(Node* node, Board &vg) {
     Tii q = node->grd;
     int x = get<0>(q);
     int y = get<1>(q);
-    vg.make_move(x, y, true);
+    vg.make_move(x, y, false);
     if ( vg.check_quit(x, y) ) return true; 
     vg.toggle_turn();
     return false;
@@ -188,7 +188,7 @@ void Mariai::fast_rollout(Board &vg, bool quit) {
         while (1) {
             x = fastrand() % N;
             y = fastrand() % N;
-            if ( !vg.make_move(x, y, false) ) break;
+            if ( !vg.make_move(x, y, true) ) break;
         }
         quit = vg.check_quit(x, y);
         if ( !quit ) vg.toggle_turn();
@@ -277,15 +277,7 @@ void Mariai::print_tree(Node* node, int sw) {
 void Mariai::gen_candy(Board &b) {
     VTii sweet;
     candy.clear();
-    analyze_pt(b, 1);
-    if ( candy.size() < 5 ) {
-        analyze_pt(b, 2);
-    }
-
-    if ( !candy.size() ) {
-        analyze_pt(b, 0);
-    }
-
+    analyze_pattern(b, false);
     for ( auto q : candy ) {
         int i = get<0>(q);
         int j = get<1>(q);
@@ -293,44 +285,46 @@ void Mariai::gen_candy(Board &b) {
     }
     candy.clear();
     candy = sweet;
+    if ( !candy.size() ) analyze_pattern(b, true);
 }
 
-void Mariai::analyze_pt(Board &b, int mode) {
-    for ( int i = b.min_x; i <= b.max_x; i++ ) {
-        for ( int j = b.min_y; j <= b.max_y; j++ ) {
+void Mariai::analyze_pattern(Board &b, bool nil) {
+    for ( int i = 0; i < N; i++ ) {
+        for ( int j = 0; j < N; j++ ) {
             if ( b.get_stone(i, j) == EMPTY ) continue;
-            find_pt_inline(b, i, j,  1,  0, mode);
-            find_pt_inline(b, i, j, -1,  0, mode);
-            find_pt_inline(b, i, j,  0,  1, mode);
-            find_pt_inline(b, i, j,  0, -1, mode);
-            find_pt_inline(b, i, j,  1,  1, mode);
-            find_pt_inline(b, i, j,  1, -1, mode);
-            find_pt_inline(b, i, j, -1,  1, mode);
-            find_pt_inline(b, i, j, -1, -1, mode);
+            find_pattern_inline(b, i, j,  1,  0, nil);
+            find_pattern_inline(b, i, j, -1,  0, nil);
+            find_pattern_inline(b, i, j,  0,  1, nil);
+            find_pattern_inline(b, i, j,  0, -1, nil);
+            find_pattern_inline(b, i, j,  1,  1, nil);
+            find_pattern_inline(b, i, j,  1, -1, nil);
+            find_pattern_inline(b, i, j, -1,  1, nil);
+            find_pattern_inline(b, i, j, -1, -1, nil);
         }
     }
     uniq_vec(candy);
 }
 
-void Mariai::find_pt_inline(Board &b, int i, int j, int di, int dj, int mode) { 
-    if ( mode == 0 ) {
-        find_pt_each(b, i, j, di, dj, "sa"    );
-    } else if ( mode == 1 ) {
-        find_pt_each(b, i, j, di, dj, "xxa"   ) ||
-        find_pt_each(b, i, j, di, dj, "ooa"   ) ||
-        find_pt_each(b, i, j, di, dj, "xax"   ) ||
-        find_pt_each(b, i, j, di, dj, "oao"   );
-        find_pt_each(b, i, j, di, dj, "x_xa"  ) ||
-        find_pt_each(b, i, j, di, dj, "o_oa"  );
-        find_pt_each(b, i, j, di, dj, "xooo_a") ||
-        find_pt_each(b, i, j, di, dj, "oxxx_a");
-    } else if ( mode == 2 ) {
-        find_pt_each(b, i, j, di, dj, "x=a"   ) ||
-        find_pt_each(b, i, j, di, dj, "o=a"   );
+void Mariai::find_pattern_inline(Board &b, int i, int j, int di, int dj, bool nil) { 
+    if ( nil ) {
+        find_pattern_each(b, i, j, di, dj, "sa");
+    }
+    if ( b.get_stone(i, j) == BLACK ) {
+        find_pattern_each(b, i, j, di, dj, "xxa"   ) ||
+        find_pattern_each(b, i, j, di, dj, "xax"   ) ||
+        find_pattern_each(b, i, j, di, dj, "xooo_a");
+    } else {
+        find_pattern_each(b, i, j, di, dj, "ooa"   ) ||
+        find_pattern_each(b, i, j, di, dj, "oao"   ) ||
+        find_pattern_each(b, i, j, di, dj, "oxxx_a");
+    }
+    if ( b.density < 1.33 ) {
+        find_pattern_each(b, i, j, di, dj, "x=a"   );
+        find_pattern_each(b, i, j, di, dj, "o=a"   );
     }
 }
 
-bool Mariai::find_pt_each(Board &b, int i, int j, int di, int dj, string pt) {
+bool Mariai::find_pattern_each(Board &b, int i, int j, int di, int dj, string pt) {
     int size = pt.length();
     char q = pt[0];
     char e = ( q == 'o' ) ? 'x' :
@@ -353,33 +347,12 @@ bool Mariai::find_pt_each(Board &b, int i, int j, int di, int dj, string pt) {
             }
             if ( !found ) return false;
         }
-        // q++ method
-        if ( pt[s] == '+' ) {
-            if ( di * dj != 0 ) return false;
-            for ( int l = -1; l <= 1; l++ ) {
-                for ( int m = -1; m <= 1; m++ ) {
-                    if ( !b.in_range(x+l, y+m) ) continue;
-                    if ( on_main_axis(l, m, di, dj) &&
-                         !match_stones(b, q, x+l, y+m) ) return false;
-                }
-            }
-            for ( int l = -1; l <= 1; l++ ) {
-                for ( int m = -1; m <= 1; m++ ) {
-                    if ( !b.in_range(x+l, y+m) ) continue;
-                    if ( !on_main_axis(l, m, di, dj) &&
-                         b.get_stone(x+l, y+m) == EMPTY ) 
-                        candy.push_back(make_tuple(x+l, y+m));
-                }
-            }
-            return false;
-        }
     }
     // piling up candies
     for ( int s = 0; s < size; s++ ) {
         int x = i + s * di;
         int y = j + s * dj;
-        if ( pt[s] == 'a' ) 
-            candy.push_back(make_tuple(x, y));
+        if ( pt[s] == 'a' ) candy.push_back(make_tuple(x, y));
     }
     return true;
 }
