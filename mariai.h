@@ -42,7 +42,6 @@ public:
     Tii                  pick_best             (Node* node);
     Tii                  next_move             ();
     bool                 make_fast_decision    (Node* node);
-    Tii                  init_move             (Board &b);
     void                 show_progress         ();
     void                 dump_progress         (double pct);
 

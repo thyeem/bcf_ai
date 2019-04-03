@@ -5,6 +5,10 @@ Board::Board() : turn(WHITE),
                  scoreW(0), 
                  cur_x(-1),
                  cur_y(-1),
+                 min_x(N/2),
+                 max_x(N/2),
+                 min_y(N/2),
+                 max_y(N/2),
                  moves(0), 
                  ewp(50.0)
 {
@@ -38,7 +42,7 @@ void Board::print_board(bool dump_candy) {
         for ( int j = 0; j < N; j++ ) {
             if ( board[i][j] == CANDY ) {
                 cout << TC_GREEN << "+" << TC_RESET << " ";
-            } else if ( get_cur(i, j) ) {
+            } else if ( is_cur_pos(i, j) ) {
                 if ( board[i][j] == BLACK ) cout << TC_GREEN << "x" << TC_RESET << " ";
                 if ( board[i][j] == WHITE ) cout << TC_GREEN << "o" << TC_RESET << " ";
             } else {
@@ -76,13 +80,17 @@ void Board::set_score(Stone s, int score) {
     }
 }
 
-bool Board::get_cur(int x, int y) {
+bool Board::is_cur_pos(int x, int y) {
     return ( x == cur_x && y == cur_y );
 }
 
-void Board::set_cur(int x, int y) {
+void Board::update_meta(int x, int y) {
     cur_x = x;
     cur_y = y;
+    if ( x < min_x ) min_x = x; 
+    if ( x > max_x ) max_x = x; 
+    if ( y < min_y ) min_y = y; 
+    if ( y > max_y ) max_y = y; 
 }
 
 void Board::toggle_turn() {
@@ -119,7 +127,7 @@ int Board::make_move(int x, int y, bool qual) {
         if ( !qual && check_3_3(x, y) ) return 2;
         moves++;
         set_stone(x, y, turn);
-        set_cur(x, y);
+        update_meta(x, y);
         if ( BCF ) bite_move(x, y);
         return 0;
     }

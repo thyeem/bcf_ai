@@ -92,23 +92,6 @@ Node* Mariai::get_maxW_child(Node* node) {
     return it;
 }
 
-Tii Mariai::init_move(Board &b) {
-    for ( int i = 0; i < N; i++ ) {
-        for ( int j = 0; j < N; j++ ) {
-            if ( b.get_stone(i, j) != EMPTY ) {
-                int px = ( i == 0    ) ? i + 1 :
-                         ( i == N-1  ) ? i - 1 :
-                         ( i > N-1-i ) ? i - 1 : i + 1;
-                int py = ( j == 0    ) ? j + 1 :
-                         ( j == N-1  ) ? j - 1 :
-                         ( j > N-1-j ) ? j - 1 : j + 1;
-                return make_tuple(px, py);
-            }
-        }
-    }
-    return make_tuple(N/2, N/2);
-}
-
 Tii Mariai::next_move() {
     Node root(NULL, make_tuple(-1, -1), EMPTY);
     roof = &root;
@@ -295,7 +278,7 @@ void Mariai::gen_candy(Board &b) {
     VTii sweet;
     candy.clear();
     analyze_pt(b, 1);
-    if ( b.moves < 20 && candy.size() < 7 ) {
+    if ( candy.size() < 5 ) {
         analyze_pt(b, 2);
     }
 
@@ -313,8 +296,8 @@ void Mariai::gen_candy(Board &b) {
 }
 
 void Mariai::analyze_pt(Board &b, int mode) {
-    for ( int i = 0; i < N; i++ ) {
-        for ( int j = 0; j < N; j++ ) {
+    for ( int i = b.min_x; i <= b.max_x; i++ ) {
+        for ( int j = b.min_y; j <= b.max_y; j++ ) {
             if ( b.get_stone(i, j) == EMPTY ) continue;
             find_pt_inline(b, i, j,  1,  0, mode);
             find_pt_inline(b, i, j, -1,  0, mode);
@@ -336,9 +319,9 @@ void Mariai::find_pt_inline(Board &b, int i, int j, int di, int dj, int mode) {
         find_pt_each(b, i, j, di, dj, "xxa"   ) ||
         find_pt_each(b, i, j, di, dj, "ooa"   ) ||
         find_pt_each(b, i, j, di, dj, "xax"   ) ||
-        find_pt_each(b, i, j, di, dj, "oao"   ) ||
-//         find_pt_each(b, i, j, di, dj, "x=a"   ) ||
-//         find_pt_each(b, i, j, di, dj, "o=a"   );
+        find_pt_each(b, i, j, di, dj, "oao"   );
+        find_pt_each(b, i, j, di, dj, "x_xa"  ) ||
+        find_pt_each(b, i, j, di, dj, "o_oa"  );
         find_pt_each(b, i, j, di, dj, "xooo_a") ||
         find_pt_each(b, i, j, di, dj, "oxxx_a");
     } else if ( mode == 2 ) {

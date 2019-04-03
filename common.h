@@ -29,8 +29,8 @@ using namespace std;
 #define UCB_POW        0.5
 #define UCB_C0         (log(NPLAY))
 #define RATIO_FD       20
-#define VALUE_FD       (NPLAY * 0.2)
-#define PRUNING        500000
+#define VALUE_FD       (NPLAY * 0.3)
+#define PRUNING        600000
 #define PRUNE_RANK     3
 
 #define RUN            1

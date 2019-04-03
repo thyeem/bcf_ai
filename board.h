@@ -12,8 +12,8 @@ public:
     void       set_score            (Stone s, int score);
     Player     get_player           (Stone s);
     void       set_player           (Player pB, Player pW);
-    bool       get_cur              (int x, int y);
-    void       set_cur              (int x, int y);
+    bool       is_cur_pos           (int x, int y);
+    void       update_meta          (int x, int y);
     string     get_nickname         (Stone s);
     void       toggle_turn          ();
     Stone      whose_turn           ();
@@ -35,10 +35,14 @@ private:
     Player     playerW;
     int        scoreB;
     int        scoreW;
-    int        cur_x; 
-    int        cur_y;
 
 public: 
+    int        cur_x; 
+    int        cur_y;
+    int        min_x;
+    int        max_x;
+    int        min_y;
+    int        max_y;
     int        moves;
     double     ewp;
     VTii       candy;
