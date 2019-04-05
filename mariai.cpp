@@ -152,7 +152,8 @@ tuple<bool, Node*> Mariai::select_path(Node* node, Board &vg) {
     }
 
     // TREE POLICY: expansion
-    if ( is_expandable(node) && expand_node(node, vg) ) {
+    if ( is_expandable(node) ) { 
+        expand_node(node, vg);
         node = &node->child[node->icQ[0]];
         if ( move_check_quit_vg(node, vg) ) return make_tuple(true, node);
     }
@@ -163,17 +164,15 @@ bool Mariai::is_expandable(Node* node) {
     return node->leaf && node->visit >= NEXP;
 }
 
-bool Mariai::expand_node(Node* node, Board &vg) {
+void Mariai::expand_node(Node* node, Board &vg) {
     Board g = vg;
     gen_candy(g);
-    if ( !candy.size() ) return false;
     int idx = 0;
     for ( auto q : candy ) {
         insert_node(node, q, g.whose_turn());
         node->icQ.push_back(char(idx++));
     }
     node->leaf = false;
-    return true;
 }
 
 void Mariai::insert_node(Node* node, Tii q, Stone s) {
@@ -277,13 +276,16 @@ void Mariai::gen_candy(Board &b) {
     candy.clear();
     b.update_density();
     analyze_pattern(b, false);
-    for ( auto q : candy ) {
-        int i = get<0>(q);
-        int j = get<1>(q);
-        if ( !b.check_3_3(i, j) ) sweet.push_back(q);
+    if ( !candy.size() ) analyze_pattern(b, true);
+}
+
+void Mariai::refine_candy(Board &b) {
+    for ( auto it = candy.begin(); it != candy.end(); ) {
+        int i, j;
+        tie(i, j) = (*it);
+        if ( b.check_3_3(i, j) ) it = candy.erase(it);
+        else ++it;
     }
-    candy.clear();
-    candy = sweet;
 }
 
 void Mariai::analyze_pattern(Board &b, bool nil) {
@@ -301,10 +303,11 @@ void Mariai::analyze_pattern(Board &b, bool nil) {
         }
     }
     uniq_vec(candy);
+    refine_candy(b);
 }
 
 void Mariai::find_pattern_inline(Board &b, int i, int j, int di, int dj, bool nil) { 
-    if ( b.moves == 1 || nil ) {
+    if ( nil ) {
         find_pattern_each(b, i, j, di, dj, "sa");
     } else {
         if ( b.get_stone(i, j) == BLACK ) {
@@ -316,24 +319,24 @@ void Mariai::find_pattern_inline(Board &b, int i, int j, int di, int dj, bool ni
             find_pattern_each(b, i, j, di, dj, "oao"   ) ||
             find_pattern_each(b, i, j, di, dj, "oxxx_a");
         }
-        if ( b.moves < 7 || b.density < CUT_DENSITY ) {
-            find_pattern_each(b, i, j, di, dj, "x=a"   );
-            find_pattern_each(b, i, j, di, dj, "o=a"   );
+        if ( b.density < CUT_DENSITY ) {
+            find_pattern_each(b, i, j, di, dj, "?=a"   );
         }
     }
 }
 
 bool Mariai::find_pattern_each(Board &b, int i, int j, int di, int dj, string pt) {
     int size = pt.length();
-    char m = pt[0];
-    char e = ( m == 'x' ) ? 'o' : ( m == 'o' ) ? 'x' : '_';
+    char m = ( b.whose_turn() == BLACK ) ? 'o' : 'x';
+    char e = ( m == 'x' ) ? 'o' : 'x';
     for ( int s = 0; s < size; s++ ) {
         int x = i + s * di;
         int y = j + s * dj;
+        char O = ( pt[s] == '?' ) ? m : pt[s];
         if ( !b.in_range(x, y) ) return false;
-        if ( !match_stones(b, pt[s], x, y) ) return false;
+        if ( !match_stones(b, O, x, y) ) return false;
 
-        if ( pt[s] == '=' ) {
+        if ( O == '=' ) {
             int found = 0;
             if ( di * dj != 0 ) return false;
             for ( int p = -1; p <= 1; p++ ) {

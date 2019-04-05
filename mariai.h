@@ -12,6 +12,7 @@ public:
     Draw*                gd                    ();
     int                  fastrand              ();
     void                 gen_candy             (Board &b);
+    void                 refine_candy          (Board &b);
     void                 analyze_pattern       (Board &b, bool nil);
     void                 find_pattern_inline   (Board &b, int i, int j, int di, int dj, bool nil); 
     bool                 find_pattern_each     (Board &b, int i, int j, int di, int dj, string pt); 
@@ -29,7 +30,7 @@ public:
     void                 insert_node           (Node* node, Tii q, Stone s);
     tuple<bool, Node*>   select_path           (Node* node, Board &vg);
     bool                 is_expandable         (Node* node);
-    bool                 expand_node           (Node* node, Board &vg);
+    void                 expand_node           (Node* node, Board &vg);
     bool                 move_check_quit_vg    (Node* node, Board &vg);
     void                 fast_rollout          (Board &vg, bool quit);
     void                 backpropagation       (Node* node, Stone turn);

@@ -29,10 +29,10 @@ using namespace std;
 #define UCB_POW        0.5
 #define UCB_C0         (log(NPLAY))
 #define RATIO_FD       20
-#define VALUE_FD       300000
+#define VALUE_FD       200000
 #define PRUNING        600000
 #define PRUNE_RANK     3
-#define CUT_DENSITY    1.5
+#define CUT_DENSITY    2.5
 
 #define RUN            1
 #define PRINT_TREE     0
@@ -40,7 +40,7 @@ using namespace std;
 #define AI_QUIZ        0
 #define QUIZ_NUM       4
 #define MATCH_NUM      300
-#define PUT_CANDY      1
+#define PUT_CANDY      0
 #define PUT_BOARD      1
 
 #define PBWIDTH        33

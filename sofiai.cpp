@@ -12,32 +12,29 @@ void Sofiai::set_coeff() {
     ccc[ "score"  ] = +1.2e4;
    
     // score =========================
-    cpt[ "oxxa"   ] = +1.2e4;
-    cpt[ "_oooa"  ] = +2.0e4;
+    cpt[ "_xxxxa" ] = -2.0e6;
     cpt[ "_ooooa" ] = +2.0e6;
     cpt[ "xooooa" ] = +5.0e5;
-    //--------------------------------
     cpt[ "xooa"   ] = -1.0e4;
+    cpt[ "oxxa"   ] = +1.0e4;
     cpt[ "_xxxa"  ] = -2.0e4;
-    cpt[ "_xxxxa" ] = -2.0e6;
+    cpt[ "_oooa"  ] = +2.0e4;
    
     // move priority =================
-    ppt[ "_ooa"  ]  = 3;
-    ppt[ "oooa"  ]  = 2;
-    ppt[ "ooooa" ]  = 1;
-    ppt[ "oxxa"  ]  = 3;
-    //--------------------------------
-    ppt[ "_xxa"  ]  = 3;
-    ppt[ "xxxa"  ]  = 2;
     ppt[ "xxxxa" ]  = 1;
-    ppt[ "xooa"  ]  = 3;
-    //--------------------------------
-    ppt[ "oao"   ]  = 4;
+    ppt[ "ooooa" ]  = 1;
+    ppt[ "xxxa"  ]  = 2;
+    ppt[ "oooa"  ]  = 2;
+    ppt[ "xxx_a" ]  = 3;
+    ppt[ "ooo_a" ]  = 3;
     ppt[ "xax"   ]  = 4;
-    ppt[ "ooo_a" ]  = 5;
-    ppt[ "xxx_a" ]  = 5;
-    ppt[ "_x_xa" ]  = 6;
-    ppt[ "_o_oa" ]  = 6;
+    ppt[ "oao"   ]  = 4;
+    ppt[ "_xxa"  ]  = 5;
+    ppt[ "_ooa"  ]  = 5;
+    ppt[ "_x_xa" ]  = 5;
+    ppt[ "_o_oa" ]  = 5;
+    ppt[ "xooa"  ]  = 6;
+    ppt[ "oxxa"  ]  = 6;
 }
 
 Board *Sofiai::gb() { 
