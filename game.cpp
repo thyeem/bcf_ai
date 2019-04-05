@@ -124,10 +124,10 @@ void Game::play_game() {
             return;
         }
 
-        stop = gb()->make_move(get<0>(grd), get<1>(grd), false);
+        stop = gb()->make_move(get<0>(grd), get<1>(grd));
         Board b = *gb();
-        #if PUT_CANDY
         maria.gen_candy(b);
+        #if PUT_CANDY
         for ( auto q : maria.candy ) {
             int i = get<0>(q);
             int j = get<1>(q);

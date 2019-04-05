@@ -44,7 +44,7 @@ bool Test::match_play(int nth) {
             if ( !b.moves ) grd = make_tuple(N/2, N/2);
             else grd = white.next_move();
         }
-        stop = b.make_move(get<0>(grd), get<1>(grd), false);
+        stop = b.make_move(get<0>(grd), get<1>(grd));
 
         if ( !stop ) {
             print_per_move(b, lines, pass, nth);

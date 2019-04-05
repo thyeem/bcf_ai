@@ -38,8 +38,7 @@ void Mariai::sort_icQ(Node* node) {
     for ( int i = 1; i < size; i++ ) {
         tmp  = node->icQ[i];
         tmpQ = node->child[tmp].Q;
-        for ( j = i; 
-              j > 0 && tmpQ > node->child[node->icQ[j-1]].Q; j-- ) {
+        for ( j = i; j > 0 && tmpQ > node->child[node->icQ[j-1]].Q; j-- ) {
             node->icQ[j] = node->icQ[j-1];
         }
         node->icQ[j] = tmp;
@@ -139,7 +138,7 @@ bool Mariai::move_check_quit_vg(Node* node, Board &vg) {
     Tii q = node->grd;
     int x = get<0>(q);
     int y = get<1>(q);
-    vg.make_move(x, y, false);
+    vg.make_move(x, y);
     if ( vg.check_quit(x, y) ) return true; 
     vg.toggle_turn();
     return false;
@@ -149,33 +148,32 @@ tuple<bool, Node*> Mariai::select_path(Node* node, Board &vg) {
     // TREE POLICY: selection
     while ( !node->leaf ) {
         node = &node->child[node->icQ[0]];
-        if ( move_check_quit_vg(node, vg) ) 
-        return make_tuple(true, node);
+        if ( move_check_quit_vg(node, vg) ) return make_tuple(true, node);
     }
 
     // TREE POLICY: expansion
-    if ( is_expandable(node) ) {
-        expand_node(node, vg);
+    if ( is_expandable(node) && expand_node(node, vg) ) {
         node = &node->child[node->icQ[0]];
-        if ( move_check_quit_vg(node, vg) ) 
-        return make_tuple(true, node);
+        if ( move_check_quit_vg(node, vg) ) return make_tuple(true, node);
     }
     return make_tuple(false, node);
 }
 
 bool Mariai::is_expandable(Node* node) {
-    return node->visit >= NEXP;
+    return node->leaf && node->visit >= NEXP;
 }
 
-void Mariai::expand_node(Node* node, Board &vg) {
+bool Mariai::expand_node(Node* node, Board &vg) {
     Board g = vg;
     gen_candy(g);
-    int   idx = 0;
+    if ( !candy.size() ) return false;
+    int idx = 0;
     for ( auto q : candy ) {
         insert_node(node, q, g.whose_turn());
         node->icQ.push_back(char(idx++));
     }
     node->leaf = false;
+    return true;
 }
 
 void Mariai::insert_node(Node* node, Tii q, Stone s) {
@@ -188,7 +186,7 @@ void Mariai::fast_rollout(Board &vg, bool quit) {
         while (1) {
             x = fastrand() % N;
             y = fastrand() % N;
-            if ( !vg.make_move(x, y, true) ) break;
+            if ( !vg.make_move(x, y) ) break;
         }
         quit = vg.check_quit(x, y);
         if ( !quit ) vg.toggle_turn();
@@ -277,6 +275,7 @@ void Mariai::print_tree(Node* node, int sw) {
 void Mariai::gen_candy(Board &b) {
     VTii sweet;
     candy.clear();
+    b.update_density();
     analyze_pattern(b, false);
     for ( auto q : candy ) {
         int i = get<0>(q);
@@ -285,7 +284,6 @@ void Mariai::gen_candy(Board &b) {
     }
     candy.clear();
     candy = sweet;
-    if ( !candy.size() ) analyze_pattern(b, true);
 }
 
 void Mariai::analyze_pattern(Board &b, bool nil) {
@@ -306,29 +304,29 @@ void Mariai::analyze_pattern(Board &b, bool nil) {
 }
 
 void Mariai::find_pattern_inline(Board &b, int i, int j, int di, int dj, bool nil) { 
-    if ( nil ) {
+    if ( b.moves == 1 || nil ) {
         find_pattern_each(b, i, j, di, dj, "sa");
-    }
-    if ( b.get_stone(i, j) == BLACK ) {
-        find_pattern_each(b, i, j, di, dj, "xxa"   ) ||
-        find_pattern_each(b, i, j, di, dj, "xax"   ) ||
-        find_pattern_each(b, i, j, di, dj, "xooo_a");
     } else {
-        find_pattern_each(b, i, j, di, dj, "ooa"   ) ||
-        find_pattern_each(b, i, j, di, dj, "oao"   ) ||
-        find_pattern_each(b, i, j, di, dj, "oxxx_a");
-    }
-    if ( b.density < 1.33 ) {
-        find_pattern_each(b, i, j, di, dj, "x=a"   );
-        find_pattern_each(b, i, j, di, dj, "o=a"   );
+        if ( b.get_stone(i, j) == BLACK ) {
+            find_pattern_each(b, i, j, di, dj, "xxa"   ) ||
+            find_pattern_each(b, i, j, di, dj, "xax"   ) ||
+            find_pattern_each(b, i, j, di, dj, "xooo_a");
+        } else {
+            find_pattern_each(b, i, j, di, dj, "ooa"   ) ||
+            find_pattern_each(b, i, j, di, dj, "oao"   ) ||
+            find_pattern_each(b, i, j, di, dj, "oxxx_a");
+        }
+        if ( b.moves < 7 || b.density < CUT_DENSITY ) {
+            find_pattern_each(b, i, j, di, dj, "x=a"   );
+            find_pattern_each(b, i, j, di, dj, "o=a"   );
+        }
     }
 }
 
 bool Mariai::find_pattern_each(Board &b, int i, int j, int di, int dj, string pt) {
     int size = pt.length();
-    char q = pt[0];
-    char e = ( q == 'o' ) ? 'x' :
-             ( q == 'x' ) ? 'o' : '_';
+    char m = pt[0];
+    char e = ( m == 'x' ) ? 'o' : ( m == 'o' ) ? 'x' : '_';
     for ( int s = 0; s < size; s++ ) {
         int x = i + s * di;
         int y = j + s * dj;
@@ -336,13 +334,12 @@ bool Mariai::find_pattern_each(Board &b, int i, int j, int di, int dj, string pt
         if ( !match_stones(b, pt[s], x, y) ) return false;
 
         if ( pt[s] == '=' ) {
-            if ( di * dj != 0 ) return false;
             int found = 0;
-            for ( int l = -1; l <= 1; l++ ) {
-                for ( int m = -1; m <= 1; m++ ) {
-                    if ( !b.in_range(x+l, y+m) ) continue;
-                    if ( on_main_axis(l, m, di, dj) ) continue;
-                    if ( match_stones(b, e, x+l, y+m) ) found++; 
+            if ( di * dj != 0 ) return false;
+            for ( int p = -1; p <= 1; p++ ) {
+                for ( int q = -1; q <= 1; q++ ) {
+                    if ( !b.in_range(x+p, y+q) ) continue;
+                    if ( match_stones(b, e, x+p, y+q) ) found++; 
                 }
             }
             if ( !found ) return false;
@@ -380,7 +377,6 @@ bool Mariai::on_perp_wing(int x, int y, int di, int dj) {
 
 bool Mariai::match_stones(Board &b, char ch, int i, int j) {
     switch ( ch ) {
-        case '+':
         case 's': return ( b.get_stone(i, j) != EMPTY ) ? true : false;
                   break;
         case 'a': 

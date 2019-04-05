@@ -6,6 +6,7 @@ Board::Board() : turn(WHITE),
                  cur_x(-1),
                  cur_y(-1),
                  moves(0), 
+                 volume(0.),
                  density(0.),
                  ewp(50.0)
 {
@@ -86,18 +87,22 @@ void Board::set_cur_pos(int x, int y) {
     cur_y = y;
 }
 
-void Board::calc_density(int x, int y) {
-    if ( x * y == 0 || x == N || y == N ) return;
-    density *= (moves - scoreB - scoreW - 1);
-    if ( board[x-1][y-1] != EMPTY ) density++;
-    if ( board[x-1][y+0] != EMPTY ) density++;
-    if ( board[x-1][y+1] != EMPTY ) density++;
-    if ( board[x+0][y-1] != EMPTY ) density++;
-    if ( board[x+0][y+1] != EMPTY ) density++;
-    if ( board[x+1][y-1] != EMPTY ) density++;
-    if ( board[x+1][y+0] != EMPTY ) density++;
-    if ( board[x+1][y+1] != EMPTY ) density++;
-    density /= (moves - scoreB - scoreW);
+void Board::update_density() {
+    volume = 0.;
+    for ( int x = 1; x < N-1; x++ ) {
+        for ( int y = 1; y < N-1; y++ ) {
+            if ( board[x][y] == EMPTY ) continue;
+            if ( board[x-1][y-1] != EMPTY ) volume++;
+            if ( board[x-1][y+0] != EMPTY ) volume++;
+            if ( board[x-1][y+1] != EMPTY ) volume++;
+            if ( board[x+0][y-1] != EMPTY ) volume++;
+            if ( board[x+0][y+1] != EMPTY ) volume++;
+            if ( board[x+1][y-1] != EMPTY ) volume++;
+            if ( board[x+1][y+0] != EMPTY ) volume++;
+            if ( board[x+1][y+1] != EMPTY ) volume++;
+        }
+    }
+    density = volume / (moves - scoreB - scoreW);
 }
 
 void Board::toggle_turn() {
@@ -127,7 +132,7 @@ void Board::set_player(Player pB, Player pW) {
     playerW = pW;
 }
 
-int Board::make_move(int x, int y, bool rollout) {
+int Board::make_move(int x, int y) {
     if ( board[x][y] != EMPTY ) {
         return 1;
     } else {
@@ -135,7 +140,6 @@ int Board::make_move(int x, int y, bool rollout) {
         moves++;
         set_stone(x, y, turn);
         set_cur_pos(x, y);
-        if ( !rollout ) calc_density(x, y);
         if ( BCF ) bite_move(x, y);
         return 0;
     }

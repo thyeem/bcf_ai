@@ -12,7 +12,7 @@ void Sofiai::set_coeff() {
     ccc[ "score"  ] = +1.2e4;
    
     // score =========================
-    cpt[ "oxxa"   ] = +1.0e4;
+    cpt[ "oxxa"   ] = +1.2e4;
     cpt[ "_oooa"  ] = +2.0e4;
     cpt[ "_ooooa" ] = +2.0e6;
     cpt[ "xooooa" ] = +5.0e5;
@@ -87,7 +87,7 @@ Tfii Sofiai::minimax(Board b, int x, int y, int depth,
 
     if ( x != -1 ) { 
         // called when depth >= 1
-        b.make_move(x, y, false);
+        b.make_move(x, y);
         if ( b.check_quit(x, y) ) {
             if ( is_maximizer ) {
                 // negative 
