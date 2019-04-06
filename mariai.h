@@ -33,14 +33,14 @@ public:
     void                 expand_node           (Node* node, Board &vg);
     bool                 move_check_quit_vg    (Node* node, Board &vg);
     void                 fast_rollout          (Board &vg, bool quit);
-    void                 backpropagation       (Node* node, Stone turn);
+    bool                 backpropagation       (Node* node, Node* roof, Stone turn);
     void                 init_tree             (Node* node, Board &b);
     void                 run_mcts              (Node* node, Board &b);
-    void                 prune_tree            (Node* node);
     void                 print_tree            (Node* node, int sw);
     Tii                  pick_best             (Node* node);
     Tii                  next_move             ();
-    bool                 make_fast_decision    (Node* node);
+//     void                 prune_tree            (Node* node);
+//     bool                 make_fast_decision    (Node* node);
     void                 show_progress         ();
     void                 dump_progress         (double pct);
 

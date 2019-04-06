@@ -126,14 +126,18 @@ void Game::play_game() {
 
         stop = gb()->make_move(get<0>(grd), get<1>(grd));
         Board b = *gb();
-        maria.gen_candy(b);
+
         #if PUT_CANDY
+        b.toggle_turn();
+        maria.gen_candy(b);
         for ( auto q : maria.candy ) {
             int i = get<0>(q);
             int j = get<1>(q);
             b.set_stone(i, j, CANDY);
         }
+        b.toggle_turn();
         #endif
+
         gd()->update_screen(stop, get<1>(grd), 2 * get<0>(grd), &b);
         if ( !stop ) quit = gb()->check_quit(get<0>(grd), get<1>(grd));
     }

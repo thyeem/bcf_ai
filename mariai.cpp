@@ -25,7 +25,7 @@ int Mariai::fastrand() {
 double Mariai::calc_ucb(Node* node) {
     if ( node->prev == NULL ) return 1;
     return ( 1. * node->win / node->visit ) + 
-           UCB_C * pow( log(NPLAY) / node->visit, UCB_POW);
+           UCB_C * pow( log(PLAYOUTS) / node->visit, UCB_POW);
 }
 
 void Mariai::sort_icQ(Node* node) {
@@ -114,7 +114,8 @@ void Mariai::init_tree(Node* node, Board &b) {
 }
 
 void Mariai::run_mcts(Node* node, Board &b) {
-    for ( int n = 0; n < NPLAY; n++ ) {
+    Node* roof = node;
+    for ( int n = 0; n < PLAYOUTS; n++ ) {
         Node* head = node;
         Board vg   = b;
         bool  quit = false;
@@ -126,22 +127,13 @@ void Mariai::run_mcts(Node* node, Board &b) {
         fast_rollout(vg, quit);
 
         // BACKUP: backpropagation
-        backpropagation(head, vg.whose_turn());
-        itr++;
+        quit = backpropagation(head, roof, vg.whose_turn());
+        if ( quit ) return;
+        else itr++;
+        #if RUN  
         show_progress();
-        if ( make_fast_decision(node) ) return;
-	    if ( itr % PRUNING == 0 ) prune_tree(node);
+        #endif
     }
-}
-
-bool Mariai::move_check_quit_vg(Node* node, Board &vg) {
-    Tii q = node->grd;
-    int x = get<0>(q);
-    int y = get<1>(q);
-    vg.make_move(x, y);
-    if ( vg.check_quit(x, y) ) return true; 
-    vg.toggle_turn();
-    return false;
 }
 
 tuple<bool, Node*> Mariai::select_path(Node* node, Board &vg) { 
@@ -158,10 +150,6 @@ tuple<bool, Node*> Mariai::select_path(Node* node, Board &vg) {
         if ( move_check_quit_vg(node, vg) ) return make_tuple(true, node);
     }
     return make_tuple(false, node);
-}
-
-bool Mariai::is_expandable(Node* node) {
-    return node->leaf && node->visit >= NEXP;
 }
 
 void Mariai::expand_node(Node* node, Board &vg) {
@@ -192,47 +180,62 @@ void Mariai::fast_rollout(Board &vg, bool quit) {
     }
 }
 
-void Mariai::backpropagation(Node* node, Stone turn) {
+bool Mariai::backpropagation(Node* node, Node* roof, Stone turn) {
     while ( node != NULL ) {
         node->visit++;
+        if ( node != roof && node->visit > CUT_FAST_DECISION ) return true;
         if ( turn == node->turn ) node->win++;
         node->Q  = calc_ucb(node);
         node->wp = 1. * node->win / node->visit;
         sort_icQ(node);
         node = node->prev;
     }
-}
-
-bool Mariai::make_fast_decision(Node* node) {
-    if ( itr % FREQ_FD != 0 ) return false;
-    else {
-        vector<size_t> iv = sort_icV(node);
-        if ( node->child[iv[0]].visit > VALUE_FD ) {
-            return true;
-        }
-    }
     return false;
 }
 
-void Mariai::prune_tree(Node *node) {
-    vector<size_t> iv = sort_icV(node);
-    if ( iv.size() > PRUNE_RANK ) {
-        for ( auto &nd : node->child ) {
-            if ( nd.visit < node->child[iv[PRUNE_RANK-1]].visit ) {
-                nd.child.clear();
-                nd.leaf   = true;
-                nd.Q      = -1;
-                nd.wp     = -1;
-            }
-        }
-    }
+bool Mariai::is_expandable(Node* node) {
+    return node->leaf && node->visit >= NEXP;
 }
 
+bool Mariai::move_check_quit_vg(Node* node, Board &vg) {
+    Tii q = node->grd;
+    int x = get<0>(q);
+    int y = get<1>(q);
+    vg.make_move(x, y);
+    if ( vg.check_quit(x, y) ) return true; 
+    vg.toggle_turn();
+    return false;
+}
+
+
+// bool Mariai::make_fast_decision(Node* node) {
+//     if ( itr % FREQ_FD != 0 ) return false;
+//     else {
+//         vector<size_t> iv = sort_icV(node);
+//         if ( node->child[iv[0]].visit > VALUE_FD ) {
+//             return true;
+//         }
+//     }
+//     return false;
+// }
+
+// void Mariai::prune_tree(Node *node) {
+//     vector<size_t> iv = sort_icV(node);
+//     if ( iv.size() > PRUNE_RANK ) {
+//         for ( auto &nd : node->child ) {
+//             if ( nd.visit < node->child[iv[PRUNE_RANK-1]].visit ) {
+//                 nd.child.clear();
+//                 nd.leaf   = true;
+//                 nd.Q      = -1;
+//                 nd.wp     = -1;
+//             }
+//         }
+//     }
+// }
+
 void Mariai::show_progress() {
-    #if RUN  
     if ( itr % LINE_BUFFER == 0 ) 
-        gd()->dump_progress(1.0 * itr / NPLAY);
-    #endif
+        gd()->dump_progress(1.0 * itr / PLAYOUTS);
 }
 
 Tii Mariai::pick_best(Node* node) {
@@ -307,45 +310,38 @@ void Mariai::analyze_pattern(Board &b, bool nil) {
 }
 
 void Mariai::find_pattern_inline(Board &b, int i, int j, int di, int dj, bool nil) { 
-    if ( nil ) {
+    if ( b.moves == 1 || nil ) {
         find_pattern_each(b, i, j, di, dj, "sa");
     } else {
         if ( b.get_stone(i, j) == BLACK ) {
             find_pattern_each(b, i, j, di, dj, "xxa"   ) ||
             find_pattern_each(b, i, j, di, dj, "xax"   ) ||
             find_pattern_each(b, i, j, di, dj, "xooo_a");
+            find_pattern_each(b, i, j, di, dj, "x_xa"  );
         } else {
             find_pattern_each(b, i, j, di, dj, "ooa"   ) ||
             find_pattern_each(b, i, j, di, dj, "oao"   ) ||
             find_pattern_each(b, i, j, di, dj, "oxxx_a");
+            find_pattern_each(b, i, j, di, dj, "o_oa"  );
         }
-        if ( b.density < CUT_DENSITY ) {
-            find_pattern_each(b, i, j, di, dj, "?=a"   );
-        }
+//         if ( b.density < CUT_DENSITY ) {
+//             find_pattern_each(b, i, j, di, dj, "?=a"   );
+//         }
     }
 }
 
 bool Mariai::find_pattern_each(Board &b, int i, int j, int di, int dj, string pt) {
     int size = pt.length();
-    char m = ( b.whose_turn() == BLACK ) ? 'o' : 'x';
-    char e = ( m == 'x' ) ? 'o' : 'x';
+    char turn = ( b.whose_turn() == BLACK ) ? 'x' : 'o';
     for ( int s = 0; s < size; s++ ) {
         int x = i + s * di;
         int y = j + s * dj;
-        char O = ( pt[s] == '?' ) ? m : pt[s];
+        char O = ( pt[s] == '?' ) ? turn : pt[s];
         if ( !b.in_range(x, y) ) return false;
         if ( !match_stones(b, O, x, y) ) return false;
 
         if ( O == '=' ) {
-            int found = 0;
             if ( di * dj != 0 ) return false;
-            for ( int p = -1; p <= 1; p++ ) {
-                for ( int q = -1; q <= 1; q++ ) {
-                    if ( !b.in_range(x+p, y+q) ) continue;
-                    if ( match_stones(b, e, x+p, y+q) ) found++; 
-                }
-            }
-            if ( !found ) return false;
         }
     }
     // piling up candies

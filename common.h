@@ -19,49 +19,45 @@
 #include <time.h>
 using namespace std;
 
-#define N              19
-#define GOAL           5 
-#define WP             10
-#define BCF            1
-#define NPLAY          1000000
-#define NEXP           1
-#define UCB_C          1.414
-#define UCB_POW        0.5
-#define UCB_C0         (log(NPLAY))
-#define RATIO_FD       20
-#define VALUE_FD       200000
-#define PRUNING        600000
-#define PRUNE_RANK     3
-#define CUT_DENSITY    2.5
+#define N                  19
+#define GOAL               5 
+#define WP                 10
+#define BCF                1
+#define PLAYOUTS           1000000
+#define NEXP               1
+#define UCB_C              1.5
+#define UCB_POW            0.5
+#define UCB_C0             (log(PLAYOUTS))
+#define CUT_DENSITY        2.5
+#define CUT_FAST_DECISION  100000
 
-#define RUN            1
-#define PRINT_TREE     0
-#define AI_MATCH       1
-#define AI_QUIZ        0
-#define QUIZ_NUM       4
-#define MATCH_NUM      300
-#define PUT_CANDY      0
-#define PUT_BOARD      1
+#define RUN                1
+#define PRINT_TREE         0
+#define AI_MATCH           1
+#define AI_QUIZ            0
+#define QUIZ_NUM           4
+#define MATCH_NUM          200
+#define PUT_CANDY          1
+#define PUT_BOARD          1
 
-#define PBWIDTH        33
-#define PBSTR          "||||||||||||||||||||||||||||||||||||||||"
-#define LINE_BUFFER    (NPLAY / 6)
-#define FREQ_FD        (NPLAY / 50)
+#define PBWIDTH            33
+#define PBSTR              "||||||||||||||||||||||||||||||||||||||||"
+#define LINE_BUFFER        (PLAYOUTS / 6)
 
 // Sofiai's parameter
-#define INF            1.0e7
-#define DEPTH          4
+#define INF                1.0e7
+#define DEPTH              4
 
-#define TC_RESET       "\033[0m"
-#define TC_BLACK       "\033[30m"
-#define TC_RED         "\033[91m"
-#define TC_GREEN       "\033[92m"
-#define TC_YELLOW      "\033[93m"
-#define TC_BLUE        "\033[94m"
-#define TC_MAGENTA     "\033[95m"
-#define TC_CYAN        "\033[96m"
-#define TC_WHITE       "\033[97m"
-#define TC_CLEAR       "\033[2J"
+#define TC_RESET           "\033[0m"
+#define TC_BLACK           "\033[30m"
+#define TC_RED             "\033[91m"
+#define TC_GREEN           "\033[92m"
+#define TC_YELLOW          "\033[93m"
+#define TC_BLUE            "\033[94m"
+#define TC_MAGENTA         "\033[95m"
+#define TC_CYAN            "\033[96m"
+#define TC_WHITE           "\033[97m"
+#define TC_CLEAR           "\033[2J"
 
 enum      Stone  { EMPTY, BLACK, WHITE, CANDY };
 enum      Player { HUMAN, SOFIAI, MARIAI };

@@ -65,11 +65,11 @@ void Test::rewind_stdout(int lines, int pass) {
 }
 
 void Test::print_param_info() {
-    fout << setw(15) << "NPLAY"      << " | " << NPLAY      << endl;
+    fout << setw(15) << "PLAYOUTS"   << " | " << PLAYOUTS   << endl;
     fout << setw(15) << "NEXP"       << " | " << NEXP       << endl;
     fout << setw(15) << "UCB_C"      << " | " << UCB_C      << endl;
     fout << setw(15) << "UCB_POW"    << " | " << UCB_POW    << endl;
-    cout << setw(15) << "NPLAY"      << " | " << NPLAY      << endl;
+    cout << setw(15) << "PLAYOUTS"   << " | " << PLAYOUTS   << endl;
     cout << setw(15) << "NEXP"       << " | " << NEXP       << endl;
     cout << setw(15) << "UCB_C"      << " | " << UCB_C      << endl;
     cout << setw(15) << "UCB_POW"    << " | " << UCB_POW    << endl;
