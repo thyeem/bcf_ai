@@ -24,12 +24,12 @@ using namespace std;
 #define WP                 10
 #define BCF                1
 #define PLAYOUTS           1000000
-#define NEXP               1
-#define UCB_C              1.5
+#define NEXP               2
+#define UCB_C              1.414
 #define UCB_POW            0.5
 #define UCB_C0             (log(PLAYOUTS))
-#define CUT_DENSITY        2.5
-#define CUT_FAST_DECISION  100000
+#define CUT_DENSITY        2.01
+#define CUT_FAST_DECISION  300000
 
 #define RUN                1
 #define PRINT_TREE         0
@@ -61,6 +61,7 @@ using namespace std;
 
 enum      Stone  { EMPTY, BLACK, WHITE, CANDY };
 enum      Player { HUMAN, SOFIAI, MARIAI };
+enum      Mode   { NIL, NORMAL, SHORT };
 typedef   tuple<int, int>    Tii;
 typedef   vector<Tii>        VTii;
 

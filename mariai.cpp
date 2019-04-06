@@ -93,7 +93,7 @@ Node* Mariai::get_maxW_child(Node* node) {
 
 Tii Mariai::next_move() {
     Node root(NULL, make_tuple(-1, -1), EMPTY);
-    roof = &root;
+    Node* roof = &root;
     itr  = 0;
     
     // Init tree: forced first expansion 
@@ -109,19 +109,18 @@ Tii Mariai::next_move() {
     return pick_best(roof);
 }
 
-void Mariai::init_tree(Node* node, Board &b) {
-    expand_node(node, b);
+void Mariai::init_tree(Node* roof, Board &b) {
+    expand_node(roof, b);
 }
 
-void Mariai::run_mcts(Node* node, Board &b) {
-    Node* roof = node;
+void Mariai::run_mcts(Node* roof, Board &b) {
     for ( int n = 0; n < PLAYOUTS; n++ ) {
-        Node* head = node;
+        Node* head = NULL;
         Board vg   = b;
         bool  quit = false;
 
         // TREE POLICY: selection & expansion
-        tie(quit, head) = select_path(head, vg);
+        tie(quit, head) = select_path(roof, vg);
 
         // DEFAULT POLICY: playout using Monte-Carlo method
         fast_rollout(vg, quit);
@@ -183,6 +182,7 @@ void Mariai::fast_rollout(Board &vg, bool quit) {
 bool Mariai::backpropagation(Node* node, Node* roof, Stone turn) {
     while ( node != NULL ) {
         node->visit++;
+        // fast-decision
         if ( node != roof && node->visit > CUT_FAST_DECISION ) return true;
         if ( turn == node->turn ) node->win++;
         node->Q  = calc_ucb(node);
@@ -206,32 +206,6 @@ bool Mariai::move_check_quit_vg(Node* node, Board &vg) {
     vg.toggle_turn();
     return false;
 }
-
-
-// bool Mariai::make_fast_decision(Node* node) {
-//     if ( itr % FREQ_FD != 0 ) return false;
-//     else {
-//         vector<size_t> iv = sort_icV(node);
-//         if ( node->child[iv[0]].visit > VALUE_FD ) {
-//             return true;
-//         }
-//     }
-//     return false;
-// }
-
-// void Mariai::prune_tree(Node *node) {
-//     vector<size_t> iv = sort_icV(node);
-//     if ( iv.size() > PRUNE_RANK ) {
-//         for ( auto &nd : node->child ) {
-//             if ( nd.visit < node->child[iv[PRUNE_RANK-1]].visit ) {
-//                 nd.child.clear();
-//                 nd.leaf   = true;
-//                 nd.Q      = -1;
-//                 nd.wp     = -1;
-//             }
-//         }
-//     }
-// }
 
 void Mariai::show_progress() {
     if ( itr % LINE_BUFFER == 0 ) 
@@ -272,14 +246,16 @@ void Mariai::print_tree(Node* node, int sw) {
     }
 }
 
-//=======================================================================
+// POLICY: NEXT MOVE CANDIDATES =========================================
 
 void Mariai::gen_candy(Board &b) {
     VTii sweet;
     candy.clear();
     b.update_density();
-    analyze_pattern(b, false);
-    if ( !candy.size() ) analyze_pattern(b, true);
+    analyze_pattern(b, NORMAL);
+    if ( (candy.size() < 5) || 
+         (b.moves < 15 && b.density < CUT_DENSITY) ) analyze_pattern(b, SHORT);
+    if ( !candy.size() ) analyze_pattern(b, NIL);
 }
 
 void Mariai::refine_candy(Board &b) {
@@ -291,57 +267,64 @@ void Mariai::refine_candy(Board &b) {
     }
 }
 
-void Mariai::analyze_pattern(Board &b, bool nil) {
+void Mariai::analyze_pattern(Board &b, Mode mode) {
     for ( int i = 0; i < N; i++ ) {
         for ( int j = 0; j < N; j++ ) {
             if ( b.get_stone(i, j) == EMPTY ) continue;
-            find_pattern_inline(b, i, j,  1,  0, nil);
-            find_pattern_inline(b, i, j, -1,  0, nil);
-            find_pattern_inline(b, i, j,  0,  1, nil);
-            find_pattern_inline(b, i, j,  0, -1, nil);
-            find_pattern_inline(b, i, j,  1,  1, nil);
-            find_pattern_inline(b, i, j,  1, -1, nil);
-            find_pattern_inline(b, i, j, -1,  1, nil);
-            find_pattern_inline(b, i, j, -1, -1, nil);
+            find_pattern_inline(b, i, j,  1,  0, mode);
+            find_pattern_inline(b, i, j, -1,  0, mode);
+            find_pattern_inline(b, i, j,  0,  1, mode);
+            find_pattern_inline(b, i, j,  0, -1, mode);
+            find_pattern_inline(b, i, j,  1,  1, mode);
+            find_pattern_inline(b, i, j,  1, -1, mode);
+            find_pattern_inline(b, i, j, -1,  1, mode);
+            find_pattern_inline(b, i, j, -1, -1, mode);
         }
     }
     uniq_vec(candy);
     refine_candy(b);
 }
 
-void Mariai::find_pattern_inline(Board &b, int i, int j, int di, int dj, bool nil) { 
-    if ( b.moves == 1 || nil ) {
+void Mariai::find_pattern_inline(Board &b, int i, int j, int di, int dj, Mode mode) { 
+    if ( mode == NIL ) {
         find_pattern_each(b, i, j, di, dj, "sa");
-    } else {
+    } else if ( mode == NORMAL ) {
         if ( b.get_stone(i, j) == BLACK ) {
-            find_pattern_each(b, i, j, di, dj, "xxa"   ) ||
-            find_pattern_each(b, i, j, di, dj, "xax"   ) ||
-            find_pattern_each(b, i, j, di, dj, "xooo_a");
-            find_pattern_each(b, i, j, di, dj, "x_xa"  );
+            find_pattern_each(b, i, j, di, dj, "xxa"    ) ||
+            find_pattern_each(b, i, j, di, dj, "xax"    ) || 
+            find_pattern_each(b, i, j, di, dj, "xooo_a" );
         } else {
-            find_pattern_each(b, i, j, di, dj, "ooa"   ) ||
-            find_pattern_each(b, i, j, di, dj, "oao"   ) ||
-            find_pattern_each(b, i, j, di, dj, "oxxx_a");
-            find_pattern_each(b, i, j, di, dj, "o_oa"  );
+            find_pattern_each(b, i, j, di, dj, "ooa"    ) ||
+            find_pattern_each(b, i, j, di, dj, "oao"    ) || 
+            find_pattern_each(b, i, j, di, dj, "oxxx_a" );
         }
-//         if ( b.density < CUT_DENSITY ) {
-//             find_pattern_each(b, i, j, di, dj, "?=a"   );
-//         }
+    } else if ( mode == SHORT ) {
+        find_pattern_each(b, i, j, di, dj, "?=a"  );
     }
 }
 
 bool Mariai::find_pattern_each(Board &b, int i, int j, int di, int dj, string pt) {
     int size = pt.length();
     char turn = ( b.whose_turn() == BLACK ) ? 'x' : 'o';
+    char enemy = ( turn == 'x' ) ? 'o' : 'x';
     for ( int s = 0; s < size; s++ ) {
         int x = i + s * di;
         int y = j + s * dj;
-        char O = ( pt[s] == '?' ) ? turn : pt[s];
+        char stone = ( pt[s] == '?' ) ? turn : pt[s];
         if ( !b.in_range(x, y) ) return false;
-        if ( !match_stones(b, O, x, y) ) return false;
-
-        if ( O == '=' ) {
+        if ( !match_stones(b, stone, x, y) ) return false;
+        if ( stone == '=' ) {
             if ( di * dj != 0 ) return false;
+            if ( !(match_stones(b, enemy, x-1, y-1) ||
+                   match_stones(b, enemy, x-1, y+0) ||
+                   match_stones(b, enemy, x-1, y+1) ||
+                   match_stones(b, enemy, x+0, y-1) ||
+                   match_stones(b, enemy, x+0, y+1) ||
+                   match_stones(b, enemy, x+1, y-1) ||
+                   match_stones(b, enemy, x+1, y+0) ||
+                   match_stones(b, enemy, x+1, y+1)) ) {
+                return false;
+            }
         }
     }
     // piling up candies

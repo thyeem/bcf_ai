@@ -13,8 +13,8 @@ public:
     int                  fastrand              ();
     void                 gen_candy             (Board &b);
     void                 refine_candy          (Board &b);
-    void                 analyze_pattern       (Board &b, bool nil);
-    void                 find_pattern_inline   (Board &b, int i, int j, int di, int dj, bool nil); 
+    void                 analyze_pattern       (Board &b, Mode mode);
+    void                 find_pattern_inline   (Board &b, int i, int j, int di, int dj, Mode mode); 
     bool                 find_pattern_each     (Board &b, int i, int j, int di, int dj, string pt); 
     bool                 match_stones          (Board &b, char ch, int i, int j);
     bool                 on_main_axis          (int x, int y, int di, int dj);
@@ -27,25 +27,22 @@ public:
     Node*                get_maxV_child        (Node* node);
     Node*                get_maxW_child        (Node* node);
     double               calc_ucb              (Node* node);
-    void                 insert_node           (Node* node, Tii q, Stone s);
+    void                 init_tree             (Node* roof, Board &b);
+    void                 run_mcts              (Node* roof, Board &b);
     tuple<bool, Node*>   select_path           (Node* node, Board &vg);
-    bool                 is_expandable         (Node* node);
     void                 expand_node           (Node* node, Board &vg);
-    bool                 move_check_quit_vg    (Node* node, Board &vg);
-    void                 fast_rollout          (Board &vg, bool quit);
     bool                 backpropagation       (Node* node, Node* roof, Stone turn);
-    void                 init_tree             (Node* node, Board &b);
-    void                 run_mcts              (Node* node, Board &b);
+    void                 fast_rollout          (Board &vg, bool quit);
+    void                 insert_node           (Node* node, Tii q, Stone s);
+    bool                 is_expandable         (Node* node);
+    bool                 move_check_quit_vg    (Node* node, Board &vg);
     void                 print_tree            (Node* node, int sw);
     Tii                  pick_best             (Node* node);
     Tii                  next_move             ();
-//     void                 prune_tree            (Node* node);
-//     bool                 make_fast_decision    (Node* node);
     void                 show_progress         ();
     void                 dump_progress         (double pct);
 
 public:
-    Node*                roof;
     VTii                 candy;
 
 private:
