@@ -129,6 +129,7 @@ void Mariai::run_mcts(Node* roof, Board &b) {
         quit = backpropagation(head, roof, vg.whose_turn());
         if ( quit ) return;
         else itr++;
+        if ( itr > ITER_PRUNING ) prune_tree(roof);
         #if RUN  
         show_progress();
         #endif
@@ -183,7 +184,7 @@ bool Mariai::backpropagation(Node* node, Node* roof, Stone turn) {
     while ( node != NULL ) {
         node->visit++;
         // fast-decision
-        if ( node != roof && node->visit > CUT_FAST_DECISION ) return true;
+        if ( node != roof && node->visit > ITER_DECISION ) return true;
         if ( turn == node->turn ) node->win++;
         node->Q  = calc_ucb(node);
         node->wp = 1. * node->win / node->visit;
@@ -216,6 +217,20 @@ Tii Mariai::pick_best(Node* node) {
     Node* best = get_maxV_child(node);
     gb()->ewp  = 100 * best->wp;
     return best->grd;
+}
+
+void Mariai::prune_tree(Node *node) {
+    vector<size_t> iv = sort_icV(node);
+    if ( iv.size() > PRUNE_RANK ) {
+        for ( auto &nd : node->child ) {
+            if ( nd.visit < node->child[iv[PRUNE_RANK-1]].visit ) {
+                nd.child.clear();
+                nd.leaf   = true;
+                nd.Q      = -1;
+                nd.wp     = -1;
+            }
+        }
+    }
 }
 
 void Mariai::print_tree(Node* node, int sw) {

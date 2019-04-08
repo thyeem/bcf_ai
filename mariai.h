@@ -36,6 +36,7 @@ public:
     void                 insert_node           (Node* node, Tii q, Stone s);
     bool                 is_expandable         (Node* node);
     bool                 move_check_quit_vg    (Node* node, Board &vg);
+    void                 prune_tree            (Node* node);
     void                 print_tree            (Node* node, int sw);
     Tii                  pick_best             (Node* node);
     Tii                  next_move             ();
