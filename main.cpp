@@ -4,7 +4,6 @@
 #include "test.h"
 
 int main() {
-    #if RUN
     while ( 1 ) {
         char ch;
         Game g;
@@ -20,8 +19,4 @@ int main() {
                       return 0;
         }
     }
-
-    #else 
-    Test().run_test();
-    #endif
 }

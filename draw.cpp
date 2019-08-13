@@ -8,53 +8,42 @@ Draw::~Draw() {}
 
 Tii Draw::get_move() {
     MEVENT event;
-    Tii grd;
     int x, y;
     int w, h;
-    int ch = 0;
+    int ch;
     bool mouse = false;
     while ( !mouse && (ch = wgetch(win)) != '\n' ) {
-        if ( ch == 'q' ) {
-            get<0>(grd) = -1;
-            get<1>(grd) = -1;
-            return grd;
-        }
+        if ( ch == 'q' ) return make_tuple(-1, -1);
         getmaxyx(stdscr, h, w);
         getyx(win, y, x);
         switch ( ch ) {
             case KEY_UP:
-                if ( y > 0 )       wmove(win, --y, x);
+                if ( y > 0 ) wmove(win, y-1, x);
                 break;
             case KEY_DOWN:
-                if ( y < N-1 )     wmove(win, ++y, x);
+                if ( y < N-1 ) wmove(win, y+1, x);
                 break;
             case KEY_LEFT:
-                if ( x > 0 )       wmove(win, y, (x-=2));
+                if ( x > 0 ) wmove(win, y, x-2);
                 break;
             case KEY_RIGHT:
-                if ( x < 2*(N-1) ) wmove(win, y, (x+=2));
+                if ( x < 2*(N-1) ) wmove(win, y, x+2);
                 break;
             case KEY_MOUSE:
                 if ( getmouse(&event) == OK && ( event.bstate & BUTTON1_PRESSED ) ) {
                     int win_x = event.x - (w - 2*N)/2 -1;
                     int win_y = event.y - (h - N)/2 -1;
-
-                    if ( win_x >= 0  && win_y < 2*N && win_y >= 0  && win_y < N ) {
+                    if ( win_x >= 0 && win_x < 2*N && win_y >= 0 && win_y < N ) {
                         wmove(win, win_y, win_x);
                         mouse = true;
                     }
                 }
                 break;
-            default:
-                break;
         }
     }
     getyx(win, y, x);
-    get<0>(grd) = x / 2;
-    get<1>(grd) = y;
-    return grd;
+    return make_tuple(x/2, y);
 }
-
 
 void Draw::wipe_out_msg() {
     char blank[50];

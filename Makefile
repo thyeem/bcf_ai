@@ -10,7 +10,7 @@ SRC=main.cpp board.cpp game.cpp sofiai.cpp mariai.cpp draw.cpp
 OBJ=$(SRC:%.cpp=%.o)
 DEP=$(OBJ:%.o=%.d)
 
-all: $(TARGET) sofia maria
+all: $(TARGET) 
 $(TARGET): $(OBJ) 
 	$(CXX) -o $@ $^ $(LDFLAGS)
 
@@ -41,9 +41,10 @@ maria: $(OBJ)
 	$(CXX) $(CXXFLAGS) -MMD -c $< -o $@
 
 #----------------------------------------------------
-c: clean
+c: clean clean_bin
 clean:
 	rm -f *.o
 	rm -f *.d
-	rm -f $(TARGET)
 
+clean_bin:
+	rm -f $(TARGET) sofia maria

@@ -33,7 +33,6 @@ using namespace std;
 #define ITER_PRUNING       500000
 #define PRUNE_RANK         5
 
-#define RUN                1
 #define PRINT_TREE         0
 #define AI_MATCH           1
 #define AI_QUIZ            0

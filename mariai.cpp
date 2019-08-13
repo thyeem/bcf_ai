@@ -92,6 +92,7 @@ Node* Mariai::get_maxW_child(Node* node) {
 }
 
 Tii Mariai::next_move() {
+    if ( gb()->moves == 0 ) return make_tuple(N/2, N/2);
     Node root(NULL, make_tuple(-1, -1), EMPTY);
     Node* roof = &root;
     itr  = 0;
@@ -130,9 +131,7 @@ void Mariai::run_mcts(Node* roof, Board &b) {
         if ( quit ) return;
         else itr++;
         if ( itr > ITER_PRUNING ) prune_tree(roof);
-        #if RUN  
         show_progress();
-        #endif
     }
 }
 
@@ -209,6 +208,7 @@ bool Mariai::move_check_quit_vg(Node* node, Board &vg) {
 }
 
 void Mariai::show_progress() {
+    if ( gd() == NULL ) return;
     if ( itr % LINE_BUFFER == 0 ) 
         gd()->dump_progress(1.0 * itr / PLAYOUTS);
 }
