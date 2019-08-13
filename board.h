@@ -12,14 +12,17 @@ public:
     void       set_score            (Stone s, int score);
     Player     get_player           (Stone s);
     void       set_player           (Player pB, Player pW);
-    bool       is_cur_pos           (int x, int y);
-    void       set_cur_pos          (int x, int y);
+    bool       is_last_move         (int x, int y);
+    void       set_last_move        (int x, int y);
     void       update_density       ();
     string     get_nickname         (Stone s);
     void       toggle_turn          ();
+    Stone      last_turn            ();
     Stone      whose_turn           ();
 
     void       print_board          (bool dump_candy);
+    void       read_board           (string file);
+    void       write_board          (string file);
     bool       in_range             (int x, int y);
     int        make_move            (int x, int y);
     bool       check_quit           (int x, int y);
@@ -32,12 +35,13 @@ public:
 private:
     Stone      board[N][N]; 
     Stone      turn;
+    Stone      last;
     Player     playerB;
     Player     playerW;
     int        scoreB;
     int        scoreW;
-    int        cur_x; 
-    int        cur_y;
+    int        X; 
+    int        Y;
 
 public: 
     int        moves;

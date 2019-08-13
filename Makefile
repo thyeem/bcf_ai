@@ -1,42 +1,49 @@
-BIN=bcf_ai
-#==============================
-#CXX=i586-mingw32msvc-g++
 CXX=g++
-C11=-std=c++11
-LIB=-lncurses
-LIBDIR= #-L/opt/local/lib
-INC=    #-I/Users/thyeem/sofiai
+INC=
+LIBS=
+CXXFLAGS=-g $(INC) -Ofast -Wall -std=c++11 
+LDFLAGS=-lncurses $(LIBS)
+TARGET=bcf_ai
 
-CFLAGS=-g -Ofast -Wall $(C11) $(INC)
-LFLAGS=$(LIB) $(LIBDIR)
-
-SRC=$(wildcard *.cpp) #$(wildcard dir/*.cpp) 
-OBJ=$(SRC:%.cpp=%.o) 
+#----------------------------------------------------
+SRC=main.cpp board.cpp game.cpp sofiai.cpp mariai.cpp draw.cpp
+OBJ=$(SRC:%.cpp=%.o)
 DEP=$(OBJ:%.o=%.d)
 
-.PHONY: all 
-all: $(BIN)
-$(BIN): $(OBJ) 
-	$(CXX) -o $@ $^ $(LFLAGS) 
+all: $(TARGET) sofia maria
+$(TARGET): $(OBJ) 
+	$(CXX) -o $@ $^ $(LDFLAGS)
 
 -include $(DEP)
-%.o: %.cpp
-	$(CXX) $(CFLAGS) -MMD -c $< -o $@
+%.o: %.cpp 
+	$(CXX) $(CXXFLAGS) -MMD -c $< -o $@
 
-.PHONY: f fresh 
-f: fresh
-fresh: all
-	-rm -rf $(OBJ) $(DEP)
 
-.PHONY: r run 
-r: run
-run: fresh
-	@ echo
-	@ echo === run =====
-	@ ./$(BIN)
+SRC=api_sofia.cpp board.cpp sofiai.cpp 
+OBJ=$(SRC:%.cpp=%.o)
+DEP=$(OBJ:%.o=%.d)
+sofia: $(OBJ) 
+	$(CXX) -o $@ $^ $(LDFLAGS)
 
-.PHONY: c clean
+-include $(DEP)
+%.o: %.cpp 
+	$(CXX) $(CXXFLAGS) -MMD -c $< -o $@
+
+
+SRC=api_maria.cpp board.cpp mariai.cpp draw.cpp
+OBJ=$(SRC:%.cpp=%.o)
+DEP=$(OBJ:%.o=%.d)
+maria: $(OBJ) 
+	$(CXX) -o $@ $^ $(LDFLAGS)
+
+-include $(DEP)
+%.o: %.cpp 
+	$(CXX) $(CXXFLAGS) -MMD -c $< -o $@
+
+#----------------------------------------------------
 c: clean
 clean:
-	-rm -rf $(BIN) $(OBJ) $(DEP)
+	rm -f *.o
+	rm -f *.d
+	rm -f $(TARGET)
 

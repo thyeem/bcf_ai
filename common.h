@@ -25,11 +25,11 @@ using namespace std;
 #define BCF                1
 #define PLAYOUTS           1000000
 #define NEXP               1
-#define UCB_C              1.41421
+#define UCB_C              1.0
 #define UCB_POW            0.5
 #define UCB_C0             (log(PLAYOUTS))
 #define CUT_DENSITY        2.01
-#define ITER_DECISION      200000
+#define ITER_DECISION      300000
 #define ITER_PRUNING       500000
 #define PRUNE_RANK         5
 

@@ -306,11 +306,11 @@ void Mariai::find_pattern_inline(Board &b, int i, int j, int di, int dj, Mode mo
     } else if ( mode == NORMAL ) {
         if ( b.get_stone(i, j) == BLACK ) {
             find_pattern_each(b, i, j, di, dj, "xxa"    ) ||
-            find_pattern_each(b, i, j, di, dj, "xax"    ) || 
+            find_pattern_each(b, i, j, di, dj, "xaxa"   ) || 
             find_pattern_each(b, i, j, di, dj, "xooo_a" );
         } else {
             find_pattern_each(b, i, j, di, dj, "ooa"    ) ||
-            find_pattern_each(b, i, j, di, dj, "oao"    ) || 
+            find_pattern_each(b, i, j, di, dj, "oaoa"   ) || 
             find_pattern_each(b, i, j, di, dj, "oxxx_a" );
         }
     } else if ( mode == SHORT ) {

@@ -17,7 +17,6 @@ public:
     ~Sofiai();
     void       set_coeff        ();
     Board*     gb               ();
-    Tii        rand_grd         ();
     void       print_board      ();
     Tii        next_move        ();
     Tfii       minimax          (Board b, int x, int y, int depth, bool is_maximizer, 

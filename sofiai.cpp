@@ -12,9 +12,10 @@ void Sofiai::set_coeff() {
     ccc[ "score"  ] = +1.2e4;
    
     // score =========================
-    cpt[ "_xxxxa" ] = -2.0e6;
-    cpt[ "_ooooa" ] = +2.0e6;
-    cpt[ "xooooa" ] = +5.0e5;
+    cpt[ "_xxxxa" ] = -5.0e6;
+    cpt[ "_ooooa" ] = +5.0e6;
+    cpt[ "xooooa" ] = +3.0e5;
+    cpt[ "oxxxxa" ] = -1.0e5;
     cpt[ "xooa"   ] = -1.0e4;
     cpt[ "oxxa"   ] = +1.0e4;
     cpt[ "_xxxa"  ] = -2.0e4;
@@ -41,37 +42,14 @@ Board *Sofiai::gb() {
     return p_board;
 }
 
-Tii Sofiai::rand_grd() {
-    Tii ran_grd[N*N];
-    int cnt = 0;
-    for ( int i = 0; i < N; i++ ) {
-        for ( int j = 0; j < N; j++ ) {
-            if ( gb()->get_stone(i, j) == EMPTY ) {
-                get<0>(ran_grd[cnt]) = i;
-                get<1>(ran_grd[cnt]) = j;
-                cnt++;
-            }
-        }
-    }
-    if ( cnt == 0 ) return make_tuple(-1, -1);
-
-    int n = rand() % cnt;
-    return make_tuple(get<0>(ran_grd[n]), get<1>(ran_grd[n]));
-}
-
 //=======================================================================
 
 Tii Sofiai::next_move() {
     if ( gb()->moves == 0 ) return make_tuple(N/2, N/2);
-    #if not RND_MOVE 
-    Tfii next;
-    next = minimax((*gb()), -1, -1, 0, true, -INF, +INF);
-    return make_tuple(get<1>(next), get<2>(next));
-    #endif
-
-    #if RND_MOVE
-    return rand_grd();
-    #endif
+    double bestval;
+    int x, y;
+    tie(bestval, x, y) = minimax((*gb()), -1, -1, 0, true, -INF, +INF);
+    return make_tuple(x, y);
 }
 
 Tfii Sofiai::minimax(Board b, int x, int y, int depth, 
