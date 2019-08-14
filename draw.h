@@ -17,7 +17,7 @@ public:
     void    dump_turn           (Board *b);
     void    dump_score          (Board *b);
     void    dump_msg            (const char* msg);
-    void    dump_ewp            (double ewp);
+    void    dump_EWP            (double eB, double eW);
     void    dump_who_won        (Board *b);
     void    update_screen       (int stop, int y, int x, Board *b);
     void    pause_auto_play     ();

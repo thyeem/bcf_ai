@@ -47,7 +47,8 @@ public:
     int        moves;
     double     volume;
     double     density;
-    double     ewp;
+    double     eB;
+    double     eW;
     VTii       candy;
 };
 

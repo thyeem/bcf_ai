@@ -215,7 +215,8 @@ void Mariai::show_progress() {
 
 Tii Mariai::pick_best(Node* node) {
     Node* best = get_maxV_child(node);
-    gb()->ewp  = 100 * best->wp;
+    gb()->eB = (node->turn == BLACK) ? 100*best->wp : 100*(1-best->wp);
+    gb()->eW = 100 - gb()->eB;
     return best->grd;
 }
 

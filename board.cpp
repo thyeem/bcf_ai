@@ -8,7 +8,8 @@ Board::Board() : turn(WHITE),
                  moves(0), 
                  volume(0.),
                  density(0.),
-                 ewp(50.0)
+                 eB(50.0),
+                 eW(50.0)
 {
     for ( int i = 0; i < N; i++ ) {
         for ( int j = 0; j < N; j++ ) {
@@ -209,8 +210,9 @@ void Board::read_board(string file) {
     last = (turn == BLACK) ? WHITE : BLACK;
     scoreB = stoi(data[4]);
     scoreW = stoi(data[5]);
-    ewp = stoi(data[6]) / 10.;
-    grid = vector<string>(data.begin() + 7, data.end());
+    eB = stoi(data[6]) / 10.;
+    eW = stoi(data[7]) / 10.;
+    grid = vector<string>(data.begin() + 8, data.end());
     for ( int i = 0; i < N*N; i++ ) {
         int x = i % N;
         int y = i / N;
@@ -229,7 +231,8 @@ void Board::write_board(string file) {
     fout << iturn  << ":";
     fout << scoreB << ":";
     fout << scoreW << ":";
-    fout << int(ewp*10) << ":";
+    fout << int(eB*10) << ":";
+    fout << int(eW*10) << ":";
     for ( int j = 0; j < N; j++ ) {
         for ( int i = 0; i < N; i++ ) {
             int stone = (board[j][i] == BLACK) ?  1 : 

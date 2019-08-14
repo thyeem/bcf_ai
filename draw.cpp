@@ -145,8 +145,8 @@ void Draw::dump_msg(const char* msg) {
     wrefresh(win);
 }
 
-void Draw::dump_ewp(double ewp) {
-    mvprintw((LINES-N)/2 - 1, (COLS-2*N)/2, "%s: %s - %.1f%%", "Message", "EWP(Mariai Odds)", ewp);
+void Draw::dump_EWP(double eB, double eW) {
+    mvprintw((LINES-N)/2 - 1, (COLS-2*N)/2, "Message: [EWP] B(%.1f%%) - W(%.1f%%)", eB, eW);
     refresh();
     wrefresh(win);
 }
@@ -191,7 +191,7 @@ void Draw::update_screen(int stop, int y, int x, Board *b) {
     if ( stop == 1 ) dump_msg("Oops! Are you serious?");
     if ( stop == 2 ) dump_msg("That's an illegal move. 3-3 connected.");
     if ( stop == 9 ) dump_msg("Get started a new game.");
-    if ( stop == 0 ) dump_ewp(b->ewp);
+    if ( stop == 0 ) dump_EWP(b->eB, b->eW);
     dump_board(b);
     dump_turn(b);
     dump_score(b);

@@ -78,14 +78,14 @@ void Test::print_param_info() {
 void Test::print_per_move(Board &b, int &lines, int &pass, int nth) {
     Stone  fs   = ( b.whose_turn() == BLACK ) ? WHITE : BLACK;
     string turn = ( fs == BLACK ) ? "B" : "W";
-    double ewp  = ( fs == BLACK ) ? 100 - b.ewp : b.ewp;
+//     double ewp  = ( fs == BLACK ) ? 100 - b.ewp : b.ewp;
 
     rewind_stdout(lines, pass);
     print_stats(false);
     cout << setw(3)   << nth     << " | ";
     cout << "moves: " << b.moves << ", ";
     cout << "turn: "  << b.get_nickname(fs) << "(" << turn << ", ";
-    cout << setprecision(1) << fixed << ewp << "%), ";
+//     cout << setprecision(1) << fixed << ewp << "%), ";
     cout << "BP: "    << b.get_score(BLACK) << ", ";
     cout << "WP: "    << b.get_score(WHITE) << endl;
     b.print_board(true);
