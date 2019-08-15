@@ -2,7 +2,6 @@
 #include "board.h"
 #include "sofiai.h"
 
-
 int main (int argc, char* argv[]) {
     Board *pb = new Board;
     if ( argc < 2 ) {

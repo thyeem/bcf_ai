@@ -2,9 +2,9 @@
 
 Mariai::Mariai(Board *b, Draw *d) : itr(0)
 {
-    p_board  = b;
-    p_draw   = d;
-    g_seed   = random_device{}();
+    p_board = b;
+    p_draw = d;
+    g_seed = random_device{}();
 }
 
 Mariai::~Mariai() {}
@@ -31,12 +31,12 @@ double Mariai::calc_ucb(Node* node) {
 void Mariai::sort_icQ(Node* node) {
     node = node->prev;
     if ( node == NULL ) return;
-    int    j = 0;
-    int    size = node->icQ.size();
-    char   tmp = 0;
+    int j = 0;
+    int size = node->icQ.size();
+    char tmp = 0;
     double tmpQ = 0;
     for ( int i = 1; i < size; i++ ) {
-        tmp  = node->icQ[i];
+        tmp = node->icQ[i];
         tmpQ = node->child[tmp].Q;
         for ( j = i; j > 0 && tmpQ > node->child[node->icQ[j-1]].Q; j-- ) {
             node->icQ[j] = node->icQ[j-1];
@@ -67,10 +67,9 @@ vector<size_t> Mariai::sort_icW(Node* node) {
 
 Node* Mariai::get_maxV_child(Node* node) {
     double max = -1;
-    Node   *it = NULL;
+    Node *it = NULL;
     for ( auto &n : node->child ) {
-        if ( n.visit > max &&
-             n.Q     > 0 ) { 
+        if ( n.visit > max && n.Q > 0 ) { 
             max = n.visit;
             it  = &n;
         }
@@ -80,10 +79,9 @@ Node* Mariai::get_maxV_child(Node* node) {
 
 Node* Mariai::get_maxW_child(Node* node) {
     double max = -1;
-    Node   *it = NULL;
+    Node *it = NULL;
     for ( auto &n : node->child ) {
-        if ( n.wp > max &&
-             n.Q  > 0 ) { 
+        if ( n.wp > max && n.Q > 0 ) { 
             max = n.wp;
             it  = &n;
         }
@@ -215,7 +213,7 @@ void Mariai::show_progress() {
 
 Tii Mariai::pick_best(Node* node) {
     Node* best = get_maxV_child(node);
-    gb()->eB = (node->turn == BLACK) ? 100*best->wp : 100*(1-best->wp);
+    gb()->eB = (best->turn == BLACK) ? 100*best->wp : 100*(1-best->wp);
     gb()->eW = 100 - gb()->eB;
     return best->grd;
 }
@@ -226,9 +224,9 @@ void Mariai::prune_tree(Node *node) {
         for ( auto &nd : node->child ) {
             if ( nd.visit < node->child[iv[PRUNE_RANK-1]].visit ) {
                 nd.child.clear();
-                nd.leaf   = true;
-                nd.Q      = -1;
-                nd.wp     = -1;
+                nd.leaf = true;
+                nd.Q    = -1;
+                nd.wp   = -1;
             }
         }
     }
@@ -245,15 +243,13 @@ void Mariai::print_tree(Node* node, int sw) {
         default: color = "E";
     }
     if ( head->Q > -2 ) {
-        cerr << setw(sw) << "["; 
-        cerr << "(" << get<0>(head->grd) << ", " 
-             << get<1>(head->grd) << ", "
-             << color << "), "
-             << "Q: "  << head->Q << ", "
-             << "w: "  << head->win << ", "
-             << "v: "  << head->visit << "]" << endl;
+        cout << setw(sw) << "["; 
+        cout << "(" << get<0>(head->grd) << ", " 
+             << get<1>(head->grd) << ", " << color << "), "
+             << "Q: " << head->Q << ", "
+             << "w: " << head->win << ", "
+             << "v: " << head->visit << "]" << endl;
     }
-
     if ( !head->leaf ) {
         vector<size_t> idx = sort_icV(head);
         for ( auto i : idx ) {

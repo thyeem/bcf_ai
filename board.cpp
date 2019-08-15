@@ -232,7 +232,7 @@ void Board::write_board(string file) {
     fout << scoreB << ":";
     fout << scoreW << ":";
     fout << int(eB*10) << ":";
-    fout << int(eW*10) << ":";
+    fout << int(1000-(eB*10)) << ":";
     for ( int j = 0; j < N; j++ ) {
         for ( int i = 0; i < N; i++ ) {
             int stone = (board[j][i] == BLACK) ?  1 : 

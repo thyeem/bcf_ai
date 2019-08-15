@@ -31,8 +31,8 @@ Tii Draw::get_move() {
                 break;
             case KEY_MOUSE:
                 if ( getmouse(&event) == OK && ( event.bstate & BUTTON1_PRESSED ) ) {
-                    int win_x = event.x - (w - 2*N)/2 -1;
-                    int win_y = event.y - (h - N)/2 -1;
+                    int win_x = event.x - (w-2*N)/2 -1;
+                    int win_y = event.y - (h-N)/2 -1;
                     if ( win_x >= 0 && win_x < 2*N && win_y >= 0 && win_y < N ) {
                         wmove(win, win_y, win_x);
                         mouse = true;
@@ -146,7 +146,7 @@ void Draw::dump_msg(const char* msg) {
 }
 
 void Draw::dump_EWP(double eB, double eW) {
-    mvprintw((LINES-N)/2 - 1, (COLS-2*N)/2, "Message: [EWP] B(%.1f%%) - W(%.1f%%)", eB, eW);
+    mvprintw((LINES-N)/2-1, (COLS-2*N)/2, "Message: [EWP] B(%.1f%%) - W(%.1f%%)", eB, eW);
     refresh();
     wrefresh(win);
 }
@@ -177,7 +177,7 @@ void Draw::init_screen_std() {
 void Draw::init_screen_win(Board *b) {
     clear();
     this->wrap = newwin(N+2, 2*N+3, (LINES-N)/2, (COLS-2*N)/2);
-    this->win  = derwin(wrap, N, 2*N, 1, 2);
+    this->win = derwin(wrap, N, 2*N, 1, 2);
     keypad(win, TRUE);
     refresh();
     box(wrap, 0, 0);

@@ -60,35 +60,36 @@ using namespace std;
 #define TC_WHITE           "\033[97m"
 #define TC_CLEAR           "\033[2J"
 
-enum      Stone  { EMPTY, BLACK, WHITE, CANDY };
-enum      Player { HUMAN, SOFIAI, MARIAI };
-enum      Mode   { NIL, NORMAL, SHORT };
-typedef   tuple<int, int>    Tii;
-typedef   vector<Tii>        VTii;
+enum     Stone  { EMPTY, BLACK, WHITE, CANDY };
+enum     Player { HUMAN, SOFIAI, MARIAI };
+enum     Mode   { NIL, NORMAL, SHORT };
+typedef  tuple<int, int> Tii;
+typedef  vector<Tii> VTii;
 
 class Node {
 public:
-    Node(Node* p, Tii g, Stone s) : Q      (UCB_C0),
-                                    wp     (0), 
-                                    win    (0), 
-                                    visit  (0), 
-                                    prev   (p), 
-                                    grd    (g), 
-                                    turn   (s),
-                                    leaf   (true) {}
+    Node(Node* p, Tii g, Stone s) : 
+        Q      (UCB_C0),
+        wp     (0), 
+        win    (0), 
+        visit  (0), 
+        prev   (p), 
+        grd    (g), 
+        turn   (s),
+        leaf   (true) {}
     ~Node() {}
 
 public: 
-    double          Q;
-    double          wp;
-    int             win;
-    int             visit;
-    Node*           prev;
-    Tii             grd;
-    Stone           turn;
-    bool            leaf;
-    vector<Node>    child;
-    vector<char>    icQ;
+    double        Q;
+    double        wp;
+    int           win;
+    int           visit;
+    Node*         prev;
+    Tii           grd;
+    Stone         turn;
+    bool          leaf;
+    vector<Node>  child;
+    vector<char>  icQ;
 };
 
 class Key_hasher {
