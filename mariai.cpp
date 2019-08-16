@@ -113,7 +113,8 @@ void Mariai::init_tree(Node* roof, Board &b) {
 }
 
 void Mariai::run_mcts(Node* roof, Board &b) {
-    for ( int n = 0; n < PLAYOUTS; n++ ) {
+    int i = (b.moves == 1) ? 3*PLAYOUTS/4 : 0;
+    for ( int n = i; n < PLAYOUTS; n++ ) {
         Node* head = NULL;
         Board vg   = b;
         bool  quit = false;
@@ -299,15 +300,15 @@ void Mariai::analyze_pattern(Board &b, Mode mode) {
 
 void Mariai::find_pattern_inline(Board &b, int i, int j, int di, int dj, Mode mode) { 
     if ( mode == NIL ) {
-        find_pattern_each(b, i, j, di, dj, "s_a");
+        find_pattern_each(b, i, j, di, dj, "saa");
     } else if ( mode == NORMAL ) {
         if ( b.get_stone(i, j) == BLACK ) {
             find_pattern_each(b, i, j, di, dj, "xxa"    ) ||
-            find_pattern_each(b, i, j, di, dj, "xaxa"   ) || 
+            find_pattern_each(b, i, j, di, dj, "xax"    ) || 
             find_pattern_each(b, i, j, di, dj, "xooo_a" );
         } else {
             find_pattern_each(b, i, j, di, dj, "ooa"    ) ||
-            find_pattern_each(b, i, j, di, dj, "oaoa"   ) || 
+            find_pattern_each(b, i, j, di, dj, "oao"    ) || 
             find_pattern_each(b, i, j, di, dj, "oxxx_a" );
         }
     } else if ( mode == SHORT ) {

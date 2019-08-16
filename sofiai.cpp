@@ -12,10 +12,10 @@ void Sofiai::set_coeff() {
     ccc[ "score"  ] = +1.2e4;
    
     // score =========================
-    cpt[ "_xxxxa" ] = -5.0e6;
-    cpt[ "_ooooa" ] = +5.0e6;
-    cpt[ "xooooa" ] = +3.0e5;
-    cpt[ "oxxxxa" ] = -1.0e5;
+    cpt[ "_xxxxa" ] = -3.0e6;
+    cpt[ "_ooooa" ] = +3.0e6;
+    cpt[ "xooooa" ] = +2.0e5;
+    //cpt[ "oxxxxa" ] = -1.0e5;
     cpt[ "xooa"   ] = -1.0e4;
     cpt[ "oxxa"   ] = +1.0e4;
     cpt[ "_xxxa"  ] = -2.0e4;
