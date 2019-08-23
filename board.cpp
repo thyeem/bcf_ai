@@ -1,6 +1,6 @@
  #include "board.h"
 
-Board::Board() : turn(WHITE), 
+Board::Board() : turn(BLACK), 
                  scoreB(0), 
                  scoreW(0), 
                  X(-1),
@@ -224,7 +224,7 @@ void Board::read_board(string file) {
 
 void Board::write_board(string file) {
     ofstream fout(file);
-    int iturn = (turn == BLACK) ? 1 : -1;
+    int iturn = (turn == BLACK) ? -1 : 1;
     fout << X << ":";
     fout << Y << ":";
     fout << moves  << ":";
