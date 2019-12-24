@@ -19,18 +19,18 @@
 #include <time.h>
 using namespace std;
 
-#define N                  19
+#define N                  13
 #define GOAL               5 
 #define WP                 10
 #define BCF                1
-#define PLAYOUTS           1000000
+#define PLAYOUTS           1100000
 #define NEXP               1
-#define UCB_C              1.0
+#define UCB_C              0.3
 #define UCB_POW            0.5
 #define UCB_C0             (log(PLAYOUTS))
-#define CUT_DENSITY        2.01
-#define ITER_DECISION      300000
-#define ITER_PRUNING       500000
+#define CUT_DENSITY        2.19
+#define ITER_DECISION      400000
+#define ITER_PRUNING       600000
 #define PRUNE_RANK         7
 
 #define PRINT_TREE         0
