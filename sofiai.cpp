@@ -10,35 +10,35 @@ Sofiai::~Sofiai() {}
 void Sofiai::set_coeff() {
     ccc[ "depth"  ] = +1.0e2;
     ccc[ "score"  ] = +1.2e4;
-   
+
     // score =========================
-    cpt[ "_xxxxa" ] = -3.0e6;
-    cpt[ "_ooooa" ] = +3.0e6;
-    cpt[ "xooooa" ] = +2.0e5;
-    //cpt[ "oxxxxa" ] = -1.0e5;
-    cpt[ "xooa"   ] = -1.0e4;
     cpt[ "oxxa"   ] = +1.0e4;
-    cpt[ "_xxxa"  ] = -2.0e4;
     cpt[ "_oooa"  ] = +2.0e4;
-   
+    cpt[ "_ooooa" ] = +2.0e6;
+    cpt[ "xooooa" ] = +5.0e5;
+    //--------------------------------
+    cpt[ "xooa"   ] = -1.0e4;
+    cpt[ "_xxxa"  ] = -2.0e4;
+    cpt[ "_xxxxa" ] = -2.0e6;
+
     // move priority =================
-    ppt[ "xxxxa" ]  = 1;
-    ppt[ "ooooa" ]  = 1;
-    ppt[ "xxxa"  ]  = 2;
+    ppt[ "_ooa"  ]  = 3;
     ppt[ "oooa"  ]  = 2;
-    ppt[ "xxx_a" ]  = 3;
-    ppt[ "ooo_a" ]  = 3;
-    ppt[ "xax"   ]  = 4;
+    ppt[ "ooooa" ]  = 1;
+    ppt[ "oxxa"  ]  = 3;
+    ppt[ "_xxa"  ]  = 3;
+    ppt[ "xxxa"  ]  = 2;
+    ppt[ "xxxxa" ]  = 1;
+    ppt[ "xooa"  ]  = 3;
     ppt[ "oao"   ]  = 4;
-    ppt[ "_xxa"  ]  = 5;
-    ppt[ "_ooa"  ]  = 5;
-    ppt[ "_x_xa" ]  = 5;
-    ppt[ "_o_oa" ]  = 5;
-    ppt[ "xooa"  ]  = 6;
-    ppt[ "oxxa"  ]  = 6;
+    ppt[ "xax"   ]  = 4;
+    ppt[ "ooo_a" ]  = 5;
+    ppt[ "xxx_a" ]  = 5;
+    ppt[ "_x_xa" ]  = 6;
+    ppt[ "_o_oa" ]  = 6;
 }
 
-Board *Sofiai::gb() { 
+Board *Sofiai::gb() {
     return p_board;
 }
 
@@ -52,20 +52,20 @@ Tii Sofiai::next_move() {
     return make_tuple(x, y);
 }
 
-Tfii Sofiai::minimax(Board b, int x, int y, int depth, 
+Tfii Sofiai::minimax(Board b, int x, int y, int depth,
                       bool is_maximizer, float alpha, float beta) {
     float val;
     float bestval;
     int   bestx;
     int   besty;
-    VTii  child; 
+    VTii  child;
 
-    if ( x != -1 ) { 
+    if ( x != -1 ) {
         // called when depth >= 1
         b.make_move(x, y);
         if ( b.check_quit(x, y) ) {
             if ( is_maximizer ) {
-                // negative 
+                // negative
                 // Entering here implies the game was ended by the previous move
                 bestval = -INF + ccc["depth"] * depth;
             } else {
@@ -125,7 +125,7 @@ float Sofiai::eval_state(Board &b, int depth) {
     Stone x = b.whose_turn();
     Stone o = ( x == BLACK ) ? WHITE : BLACK;
     float f_depth = -ccc["depth"] * depth;
-    float f_score = +ccc["score"] * ( pow(1. * b.get_score(o), 1.4) - 
+    float f_score = +ccc["score"] * ( pow(1. * b.get_score(o), 1.4) -
                                       pow(1. * b.get_score(x), 1.4) );
     float f_pt    = 0;
 
@@ -176,7 +176,7 @@ void Sofiai::analyze_pt(Board &b, Stone o, Stone x, int mode) {
                     find_pt(b, i, j, o, x, "xxx_a" );
                 }
             }
-        }   
+        }
     } else {
     // when child.size() == 0
         for ( int i = 0; i < N; i++ ) {
@@ -189,28 +189,28 @@ void Sofiai::analyze_pt(Board &b, Stone o, Stone x, int mode) {
     }
 }
 
-void Sofiai::find_pt(Board &b, int i, int j, Stone o, Stone x, string pt) { 
+void Sofiai::find_pt(Board &b, int i, int j, Stone o, Stone x, string pt) {
     float count = 0;
-    if ( find_pt_inline(b, i, j,  1,  0, o, x, pt) ) count++;  
-    if ( find_pt_inline(b, i, j, -1,  0, o, x, pt) ) count++;  
-    if ( find_pt_inline(b, i, j,  0,  1, o, x, pt) ) count++;  
-    if ( find_pt_inline(b, i, j,  0, -1, o, x, pt) ) count++;  
-    if ( find_pt_inline(b, i, j,  1,  1, o, x, pt) ) count++;  
-    if ( find_pt_inline(b, i, j,  1, -1, o, x, pt) ) count++;  
-    if ( find_pt_inline(b, i, j, -1,  1, o, x, pt) ) count++;  
-    if ( find_pt_inline(b, i, j, -1, -1, o, x, pt) ) count++;  
+    if ( find_pt_inline(b, i, j,  1,  0, o, x, pt) ) count++;
+    if ( find_pt_inline(b, i, j, -1,  0, o, x, pt) ) count++;
+    if ( find_pt_inline(b, i, j,  0,  1, o, x, pt) ) count++;
+    if ( find_pt_inline(b, i, j,  0, -1, o, x, pt) ) count++;
+    if ( find_pt_inline(b, i, j,  1,  1, o, x, pt) ) count++;
+    if ( find_pt_inline(b, i, j,  1, -1, o, x, pt) ) count++;
+    if ( find_pt_inline(b, i, j, -1,  1, o, x, pt) ) count++;
+    if ( find_pt_inline(b, i, j, -1, -1, o, x, pt) ) count++;
     if ( count ) get<0>(mpt[pt]) += count;
 }
 
-bool Sofiai::find_pt_inline(Board &b, int i, int j, int di, int dj, 
+bool Sofiai::find_pt_inline(Board &b, int i, int j, int di, int dj,
                             Stone o, Stone x, string pt) {
     int size = pt.length();
     VTii *vg = &get<1>(mpt[pt]);
 
     for ( int s = 0; s < size; s++ ) {
         if ( !b.in_range(i + s*di, j + s*dj) ) return false;
-        if ( b.get_stone(i + s*di, j + s*dj) != 
-                  char_to_stone(pt[s], o, x) ) return false; 
+        if ( b.get_stone(i + s*di, j + s*dj) !=
+                  char_to_stone(pt[s], o, x) ) return false;
     }
 
     for ( int s = 0; s < size; s++ ) {
@@ -238,12 +238,12 @@ VTii Sofiai::get_child(Board &b, int mode) {
             int i = get<0>(q);
             int j = get<1>(q);
             if ( !b.check_3_3(i, j) ) {
-                if ( ( !mch[q] ) || 
+                if ( ( !mch[q] ) ||
                      ( mch[q] > ppt[pt] ) ) mch[q] = ppt[pt];
             }
         }
     }
-  
+
     // sort move candidates by priority value
     for ( auto r : mch ) {
         vch.emplace_back(r.second, r.first);

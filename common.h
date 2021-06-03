@@ -19,13 +19,13 @@
 #include <time.h>
 using namespace std;
 
-#define N                  13
-#define GOAL               5 
+#define N                  19
+#define GOAL               5
 #define WP                 10
 #define BCF                1
-#define PLAYOUTS           1100000
+#define PLAYOUTS           1200000
 #define NEXP               1
-#define UCB_C              0.3
+#define UCB_C              0.5
 #define UCB_POW            0.5
 #define UCB_C0             (log(PLAYOUTS))
 #define CUT_DENSITY        2.19
@@ -68,18 +68,18 @@ typedef  vector<Tii> VTii;
 
 class Node {
 public:
-    Node(Node* p, Tii g, Stone s) : 
+    Node(Node* p, Tii g, Stone s) :
         Q      (UCB_C0),
-        wp     (0), 
-        win    (0), 
-        visit  (0), 
-        prev   (p), 
-        grd    (g), 
+        wp     (0),
+        win    (0),
+        visit  (0),
+        prev   (p),
+        grd    (g),
         turn   (s),
         leaf   (true) {}
     ~Node() {}
 
-public: 
+public:
     double        Q;
     double        wp;
     int           win;
