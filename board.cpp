@@ -6,8 +6,6 @@ Board::Board() : turn(BLACK),
                  X(-1),
                  Y(-1),
                  moves(0),
-                 volume(0.),
-                 density(0.),
                  eB(50.0),
                  eW(50.0)
 {
@@ -47,24 +45,6 @@ bool Board::is_last_move(int x, int y) {
 void Board::set_last_move(int x, int y) {
     X = x;
     Y = y;
-}
-
-void Board::update_density() {
-    volume = 0.;
-    for ( int x = 1; x < N-1; x++ ) {
-        for ( int y = 1; y < N-1; y++ ) {
-            if ( board[x][y] == EMPTY ) continue;
-            if ( board[x-1][y-1] != EMPTY ) volume++;
-            if ( board[x-1][y+0] != EMPTY ) volume++;
-            if ( board[x-1][y+1] != EMPTY ) volume++;
-            if ( board[x+0][y-1] != EMPTY ) volume++;
-            if ( board[x+0][y+1] != EMPTY ) volume++;
-            if ( board[x+1][y-1] != EMPTY ) volume++;
-            if ( board[x+1][y+0] != EMPTY ) volume++;
-            if ( board[x+1][y+1] != EMPTY ) volume++;
-        }
-    }
-    density = volume / (moves - scoreB - scoreW);
 }
 
 void Board::toggle_turn() {

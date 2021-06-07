@@ -71,9 +71,9 @@ void Test::print_param_info() {
          << PLAYOUTS
          << endl;
     fout << setw(15)
-         << "NEXP"
+         << "BRANCHING"
          << " | "
-         << NEXP
+         << BRANCHING
          << endl;
     fout << setw(15)
          << "UCB_C"
@@ -91,9 +91,9 @@ void Test::print_param_info() {
          << PLAYOUTS
          << endl;
     cout << setw(15)
-         << "NEXP"
+         << "BRANCHING"
          << " | "
-         << NEXP
+         << BRANCHING
          << endl;
     cout << setw(15)
          << "UCB_C"

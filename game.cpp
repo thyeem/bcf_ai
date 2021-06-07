@@ -126,7 +126,7 @@ void Game::play_game() {
         stop = gb()->make_move(get<0>(grd), get<1>(grd));
         Board b = *gb();
 
-        #if PUT_CANDY
+        #if PRINT_CANDY
         b.toggle_turn();
         maria.gen_candy(b);
         for ( auto q : maria.candy ) {

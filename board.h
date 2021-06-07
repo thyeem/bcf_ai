@@ -14,7 +14,6 @@ public:
     void       set_player           (Player pB, Player pW);
     bool       is_last_move         (int x, int y);
     void       set_last_move        (int x, int y);
-    void       update_density       ();
     string     get_nickname         (Stone s);
     void       toggle_turn          ();
     Stone      last_turn            ();
@@ -45,8 +44,6 @@ private:
 
 public:
     int        moves;
-    double     volume;
-    double     density;
     double     eB;
     double     eW;
     VecCoords  candy;

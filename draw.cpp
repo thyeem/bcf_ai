@@ -107,8 +107,8 @@ void Draw::dump_turn(Board *b) {
         attroff(COLOR_PAIR(2));
     }
     printw("    ");
-    printw("Moves(d): ");
-    printw("%d(%4.2f)", b->moves, b->density);
+    printw("Moves: ");
+    printw("%d", b->moves);
 }
 
 void Draw::dump_score(Board *b) {

@@ -13,8 +13,9 @@ public:
     int                  fastrand              ();
     void                 gen_candy             (Board &b);
     void                 refine_candy          (Board &b);
-    void                 analyze_pattern       (Board &b, Mode mode);
-    void                 find_pattern_inline   (Board &b, int i, int j, int di, int dj, Mode mode);
+    void                 analyze_pattern       (Board &b, size_t size);
+    void                 find_pattern_inline   (Board &b, int i, int j,
+                                                          int di, int dj, size_t size);
     bool                 find_pattern_each     (Board &b, int i, int j, int di, int dj, string pt);
     bool                 match_stones          (Board &b, char ch, int i, int j);
     bool                 on_main_axis          (int x, int y, int di, int dj);

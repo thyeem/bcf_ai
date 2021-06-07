@@ -192,7 +192,7 @@ bool Mariai::backpropagation(Node* node, Node* roof, Stone turn) {
 }
 
 bool Mariai::is_expandable(Node* node) {
-    return node->leaf && node->visit >= NEXP;
+    return node->leaf && node->visit >= BRANCHING;
 }
 
 bool Mariai::move_check_quit_vg(Node* node, Board &vg) {
@@ -262,11 +262,8 @@ void Mariai::print_tree(Node* node, int sw) {
 void Mariai::gen_candy(Board &b) {
     VecCoords sweet;
     candy.clear();
-    b.update_density();
-    analyze_pattern(b, NORMAL);
-    if ( (candy.size() < 5) ||
-         (b.moves < 15 && b.density < CUT_DENSITY) ) analyze_pattern(b, SHORT);
-    if ( !candy.size() ) analyze_pattern(b, NIL);
+    analyze_pattern(b, 1);
+    if ( !candy.size() ) analyze_pattern(b, 0);
 }
 
 void Mariai::refine_candy(Board &b) {
@@ -278,40 +275,32 @@ void Mariai::refine_candy(Board &b) {
     }
 }
 
-void Mariai::analyze_pattern(Board &b, Mode mode) {
+void Mariai::analyze_pattern(Board &b, size_t size) {
     for ( int i = 0; i < N; i++ ) {
         for ( int j = 0; j < N; j++ ) {
             if ( b.get_stone(i, j) == EMPTY ) continue;
-            find_pattern_inline(b, i, j,  1,  0, mode);
-            find_pattern_inline(b, i, j, -1,  0, mode);
-            find_pattern_inline(b, i, j,  0,  1, mode);
-            find_pattern_inline(b, i, j,  0, -1, mode);
-            find_pattern_inline(b, i, j,  1,  1, mode);
-            find_pattern_inline(b, i, j,  1, -1, mode);
-            find_pattern_inline(b, i, j, -1,  1, mode);
-            find_pattern_inline(b, i, j, -1, -1, mode);
+            find_pattern_inline(b, i, j,  1,  0, size);
+            find_pattern_inline(b, i, j, -1,  0, size);
+            find_pattern_inline(b, i, j,  0,  1, size);
+            find_pattern_inline(b, i, j,  0, -1, size);
+            find_pattern_inline(b, i, j,  1,  1, size);
+            find_pattern_inline(b, i, j,  1, -1, size);
+            find_pattern_inline(b, i, j, -1,  1, size);
+            find_pattern_inline(b, i, j, -1, -1, size);
         }
     }
     uniq_vec(candy);
     refine_candy(b);
 }
 
-void Mariai::find_pattern_inline(Board &b, int i, int j, int di, int dj, Mode mode) {
-    if ( mode == NIL ) {
+void Mariai::find_pattern_inline(Board &b, int i, int j, int di, int dj, size_t size) {
+    if ( size == 0 ) {
         find_pattern_each(b, i, j, di, dj, "sa");
-    } else if ( mode == NORMAL ) {
-        if ( b.get_stone(i, j) == BLACK ) {
-            find_pattern_each(b, i, j, di, dj, "xxa"    ) ||
-            find_pattern_each(b, i, j, di, dj, "xaxa"   ) ||
-            find_pattern_each(b, i, j, di, dj, "xax"    ) ||
-            find_pattern_each(b, i, j, di, dj, "xooo_a" );
-        } else {
-            find_pattern_each(b, i, j, di, dj, "ooa"    ) ||
-            find_pattern_each(b, i, j, di, dj, "oaoa"   ) ||
-            find_pattern_each(b, i, j, di, dj, "oao"    ) ||
-            find_pattern_each(b, i, j, di, dj, "oxxx_a" );
-        }
-    } else if ( mode == SHORT ) {
+        find_pattern_each(b, i, j, di, dj, "s_a");
+    } else {
+        find_pattern_each(b, i, j, di, dj, "ssa"  );
+        find_pattern_each(b, i, j, di, dj, "sasa" );
+        find_pattern_each(b, i, j, di, dj, "sas"  );
         find_pattern_each(b, i, j, di, dj, "?=a"  );
     }
 }
@@ -323,7 +312,8 @@ bool Mariai::find_pattern_each(Board &b, int i, int j, int di, int dj, string pt
     for ( int s = 0; s < size; s++ ) {
         int x = i + s * di;
         int y = j + s * dj;
-        char stone = ( pt[s] == '?' ) ? turn : pt[s];
+        char stone = ( pt[s] == '?' ) ? turn :
+                     ( pt[s] == '!' ) ? enemy : pt[s];
         if ( !b.in_range(x, y) ) return false;
         if ( !match_stones(b, stone, x, y) ) return false;
         if ( stone == '=' ) {

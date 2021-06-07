@@ -24,19 +24,18 @@ using namespace std;
 #define WP                 10
 #define BCF                1
 #define PLAYOUTS           1200000
-#define NEXP               5
+#define BRANCHING          5
 #define UCB_C              1.414
 #define UCB_POW            0.5
 #define UCB_C0             (log(PLAYOUTS))
-#define EARLY_CUT          PLAYOUTS / 2
-#define CUT_DENSITY        2.19
+#define EARLY_CUT          PLAYOUTS / 3
 
+#define PRINT_CANDY        1
 #define PRINT_TREE         0
 #define AI_MATCH           1
 #define AI_QUIZ            0
 #define QUIZ_NUM           4
 #define MATCH_NUM          200
-#define PUT_CANDY          1
 #define PUT_BOARD          1
 
 #define PBWIDTH            33
@@ -60,7 +59,6 @@ using namespace std;
 
 enum     Stone  { EMPTY, BLACK, WHITE, CANDY };
 enum     Player { HUMAN, SOFIAI, MARIAI };
-enum     Mode   { NIL, NORMAL, SHORT };
 
 typedef  tuple<int, int> Coords;
 typedef  vector<Coords> VecCoords;

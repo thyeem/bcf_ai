@@ -1,50 +1,67 @@
 CXX=g++
 INC=
 LIBS=
-CXXFLAGS=-g $(INC) -Ofast -Wall -std=c++11 
+CXXFLAGS=-g $(INC) -Ofast -Wall -std=c++11
 LDFLAGS=-lncurses $(LIBS)
 TARGET=bcf_ai
 
-#----------------------------------------------------
+.PHONY: all sofia maria sofimarie clean
+
 SRC=main.cpp board.cpp game.cpp sofiai.cpp mariai.cpp draw.cpp
 OBJ=$(SRC:%.cpp=%.o)
 DEP=$(OBJ:%.o=%.d)
 
-all: $(TARGET) 
-$(TARGET): $(OBJ) 
+all: $(TARGET)
+$(TARGET): $(OBJ)
 	$(CXX) -o $@ $^ $(LDFLAGS)
+	make clean
 
 -include $(DEP)
-%.o: %.cpp 
+%.o: %.cpp
 	$(CXX) $(CXXFLAGS) -MMD -c $< -o $@
 
 
-SRC=api_sofia.cpp board.cpp sofiai.cpp 
+
+SRC=api_sofia.cpp board.cpp sofiai.cpp
 OBJ=$(SRC:%.cpp=%.o)
 DEP=$(OBJ:%.o=%.d)
-sofia: $(OBJ) 
+
+sofia: $(OBJ)
 	$(CXX) -o $@ $^ $(LDFLAGS)
+	make clean
 
 -include $(DEP)
-%.o: %.cpp 
+%.o: %.cpp
 	$(CXX) $(CXXFLAGS) -MMD -c $< -o $@
+
 
 
 SRC=api_maria.cpp board.cpp mariai.cpp draw.cpp
 OBJ=$(SRC:%.cpp=%.o)
 DEP=$(OBJ:%.o=%.d)
-maria: $(OBJ) 
+
+maria: $(OBJ)
 	$(CXX) -o $@ $^ $(LDFLAGS)
+	make clean
 
 -include $(DEP)
-%.o: %.cpp 
+%.o: %.cpp
 	$(CXX) $(CXXFLAGS) -MMD -c $< -o $@
 
-#----------------------------------------------------
-c: clean clean_bin
+
+
+sofimarie:
+	make sofia
+	make maria
+	make clean
+
+
 clean:
 	rm -f *.o
 	rm -f *.d
 
-clean_bin:
+
+clean-all:
+	make clean
 	rm -f $(TARGET) sofia maria
+
