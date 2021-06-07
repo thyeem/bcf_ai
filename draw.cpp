@@ -129,7 +129,7 @@ void Draw::dump_progress (double pct) {
     int lp  = (int)(pct * PBWIDTH);
     int rp  = (int)PBWIDTH - lp;
     if ( val >= 100 ) {
-        val = 100; 
+        val = 100;
         lp  = PBWIDTH;
         rp  = 0;
     }
@@ -152,7 +152,7 @@ void Draw::dump_EWP(double eB, double eW) {
 }
 
 void Draw::dump_who_won(Board *b) {
-    string winner = ( b->whose_turn() == BLACK ) ? "BLACK" : "WHITE";
+    string winner = ( b->whose_turn() == BLACK ) ? "WHITE" : "BLACK";
     winner = winner + " won. Press q to exit";
     dump_msg(winner.c_str());
     wait_for_q();
@@ -213,7 +213,7 @@ void Draw::wait_for_q() {
 bool Draw::wait_for_s() {
     char ch;
     while ( (ch = wgetch(win)) != ' ' ) {
-        if ( ch == 'q' ) return true; 
+        if ( ch == 'q' ) return true;
     }
     return false;
 }

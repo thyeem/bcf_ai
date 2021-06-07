@@ -28,13 +28,13 @@ char Game::main_menu() {
     mvprintw(LINES/2+2, COLS/2-20, "[q] EXIT");
     mvprintw(LINES/2+4, COLS/2-20, "PRESS THE KEY TO CONTINUE");
     char ch = getch();
-    return ch; 
+    return ch;
 }
 
 void Game::select_menu(char ch) {
     // playing with human
     if ( ch == '1' ) gb()->set_player(HUMAN, HUMAN);
-    
+
     // playing with SOFIAI
     if ( ch == '2' ) {
         while ( 1 ) {
@@ -42,12 +42,12 @@ void Game::select_menu(char ch) {
             printw("DO YOU ALLOW SOFIAI TO PLAY FIRST? [y/n]: ");
             ch = getch();
             if ( ch == 'y' || ch == 'Y' ) {
-                gb()->set_player(SOFIAI, HUMAN); 
+                gb()->set_player(SOFIAI, HUMAN);
                 return;
             } else if ( ch == 'n' || ch == 'N' ) {
-                gb()->set_player(HUMAN, SOFIAI); 
+                gb()->set_player(HUMAN, SOFIAI);
                 return;
-            } 
+            }
         }
     }
     // playing with MARIAI
@@ -57,16 +57,16 @@ void Game::select_menu(char ch) {
             printw("DO YOU ALLOW MARIAI TO PLAY FIRST? [y/n]: ");
             ch = getch();
             if ( ch == 'y' || ch == 'Y' ) {
-                gb()->set_player(MARIAI, HUMAN); 
+                gb()->set_player(MARIAI, HUMAN);
                 return;
             } else if ( ch == 'n' || ch == 'N' ) {
-                gb()->set_player(HUMAN, MARIAI); 
+                gb()->set_player(HUMAN, MARIAI);
                 return;
-            } 
+            }
         }
     }
 
-    // playing bet AIs 
+    // playing bet AIs
     if ( ch == '4' ) {
         while ( 1 ) {
             move(LINES/2+6, COLS/2-20);
@@ -79,7 +79,7 @@ void Game::select_menu(char ch) {
             } else if ( ch == 'n' || ch == 'N' ) {
                 auto_play = true;
                 return;
-            } 
+            }
         }
     }
 }
@@ -95,7 +95,6 @@ void Game::play_game() {
 
     while ( !quit ) {
         grd = make_tuple(-1, -1);
-        if ( !stop ) gb()->toggle_turn();
         if ( gb()->whose_turn() == BLACK ) {
             player = gb()->get_player(BLACK);
         } else {
@@ -115,8 +114,8 @@ void Game::play_game() {
             grd = maria.next_move();
             if ( !auto_play ) gd()->pause_auto_play();
         }
-        
-        // when missed next move 
+
+        // when missed next move
         if ( get<0>(grd) == -1 ) {
             gd()->wipe_out_msg();
             gd()->dump_msg("Fatal error occurred. next move not found. Press q to exit");
@@ -139,7 +138,10 @@ void Game::play_game() {
         #endif
 
         gd()->update_screen(stop, get<1>(grd), 2 * get<0>(grd), &b);
-        if ( !stop ) quit = gb()->check_quit(get<0>(grd), get<1>(grd));
+        if ( !stop ) {
+            quit = gb()->check_quit(get<0>(grd), get<1>(grd));
+            gb()->toggle_turn();
+        }
     }
     gd()->dump_who_won( gb() );
 }
