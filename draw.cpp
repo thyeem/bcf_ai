@@ -84,10 +84,10 @@ void Draw::dump_board(Board *b) {
             wattroff(win, COLOR_PAIR(b->get_stone(i, j)));
 
             if ( b->is_last_move(i, j) && b->moves > 0 ) {
-                wattron(win, COLOR_PAIR(5));
+                wattron(win, COLOR_PAIR(3));
                 if ( b->get_stone(i, j) == BLACK ) mvwaddch(win, j, 2*i, 'x');
                 else mvwaddch(win, j, 2*i, 'o');
-                wattroff(win, COLOR_PAIR(5));
+                wattroff(win, COLOR_PAIR(3));
             }
         }
     }

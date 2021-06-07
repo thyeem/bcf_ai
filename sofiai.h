@@ -3,9 +3,9 @@
 #include "common.h"
 #include "board.h"
 
-typedef   tuple<double, int, int>          MinimaxNode;
-typedef   tuple<double, Coords>            CoordsValue;
-typedef   vector<CoordsValue>              VecCoordsValue;
+typedef   tuple<double, int, int>   MinimaxNode;
+typedef   tuple<double, Coords>     CoordsValue;
+typedef   vector<CoordsValue>       VecCoordsValue;
 
 class Sofiai {
     static unsigned int g_seed;

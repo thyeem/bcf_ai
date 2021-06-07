@@ -8,18 +8,19 @@ Sofiai::Sofiai(Board *b) {
 Sofiai::~Sofiai() {}
 
 void Sofiai::set_coeff() {
-    lookup_coeff[ "depth"  ] = +1.0e2;
+    lookup_coeff[ "depth"  ] = +1.0e3;
     lookup_coeff[ "score"  ] = +1.2e4;
 
     // score
-    lookup_coeff[ "oxxa"   ] = +1.0e4;
-    lookup_coeff[ "_oooa"  ] = +2.0e4;
+    lookup_coeff[ "oxxa"   ] = +2.4e4;
+    lookup_coeff[ "_oooa"  ] = +2.2e4;
     lookup_coeff[ "_ooooa" ] = +2.0e6;
-    lookup_coeff[ "xooooa" ] = +5.0e5;
+    lookup_coeff[ "ooo_a"  ] = +2.0e4;
+    lookup_coeff[ "xooooa" ] = +2.0e4;
 
-    lookup_coeff[ "xooa"   ] = -1.0e4;
-    lookup_coeff[ "_xxxa"  ] = -2.0e4;
-    lookup_coeff[ "_xxxxa" ] = -2.0e6;
+    lookup_coeff[ "xooa"   ] = -1.5e4;
+    lookup_coeff[ "_xxxa"  ] = -3.0e4;
+    lookup_coeff[ "_xxxxa" ] = -3.0e6;
 
     // move priority
     lookup_priority[ "_ooa"  ]  = 3;
@@ -152,6 +153,7 @@ void Sofiai::analyze_pt(Board &b, Stone o, Stone x, int mode) {
                     find_pt(b, i, j, o, x, "oxxa"   );
                     find_pt(b, i, j, o, x, "xooooa" );
                     find_pt(b, i, j, o, x, "xooa"   );
+                    find_pt(b, i, j, o, x, "ooo_a"  );
                 }
             }
         }
