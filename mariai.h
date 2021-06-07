@@ -14,8 +14,8 @@ public:
     void                 gen_candy             (Board &b);
     void                 refine_candy          (Board &b);
     void                 analyze_pattern       (Board &b, Mode mode);
-    void                 find_pattern_inline   (Board &b, int i, int j, int di, int dj, Mode mode); 
-    bool                 find_pattern_each     (Board &b, int i, int j, int di, int dj, string pt); 
+    void                 find_pattern_inline   (Board &b, int i, int j, int di, int dj, Mode mode);
+    bool                 find_pattern_each     (Board &b, int i, int j, int di, int dj, string pt);
     bool                 match_stones          (Board &b, char ch, int i, int j);
     bool                 on_main_axis          (int x, int y, int di, int dj);
     bool                 on_crux_wing          (int x, int y, int di, int dj);
@@ -33,18 +33,18 @@ public:
     void                 expand_node           (Node* node, Board &vg);
     bool                 backpropagation       (Node* node, Node* roof, Stone turn);
     void                 fast_rollout          (Board &vg, bool quit);
-    void                 insert_node           (Node* node, Tii q, Stone s);
+    void                 insert_node           (Node* node, Coords q, Stone s);
     bool                 is_expandable         (Node* node);
     bool                 move_check_quit_vg    (Node* node, Board &vg);
     void                 prune_tree            (Node* node);
     void                 print_tree            (Node* node, int sw);
-    Tii                  pick_best             (Node* node);
-    Tii                  next_move             ();
+    Coords               pick_best             (Node* node);
+    Coords               next_move             ();
     void                 show_progress         ();
     void                 dump_progress         (double pct);
 
 public:
-    VTii                 candy;
+    VecCoords            candy;
 
 private:
     Board*               p_board;

@@ -33,23 +33,23 @@ public:
     void       bite_move_inline     (int x, int y, int dx, int dy);
 
 private:
-    Stone      board[N][N]; 
+    Stone      board[N][N];
     Stone      turn;
     Stone      last;
     Player     playerB;
     Player     playerW;
     int        scoreB;
     int        scoreW;
-    int        X; 
+    int        X;
     int        Y;
 
-public: 
+public:
     int        moves;
     double     volume;
     double     density;
     double     eB;
     double     eW;
-    VTii       candy;
+    VecCoords  candy;
 };
 
 #endif

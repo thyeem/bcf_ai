@@ -24,11 +24,11 @@ using namespace std;
 #define WP                 10
 #define BCF                1
 #define PLAYOUTS           1200000
-#define NEXP               1
-#define UCB_C              0.5
+#define NEXP               5
+#define UCB_C              1.414
 #define UCB_POW            0.5
 #define UCB_C0             (log(PLAYOUTS))
-#define EARLY_CUT          400000
+#define EARLY_CUT          PLAYOUTS / 2
 #define CUT_DENSITY        2.19
 
 #define PRINT_TREE         0
@@ -61,12 +61,13 @@ using namespace std;
 enum     Stone  { EMPTY, BLACK, WHITE, CANDY };
 enum     Player { HUMAN, SOFIAI, MARIAI };
 enum     Mode   { NIL, NORMAL, SHORT };
-typedef  tuple<int, int> Tii;
-typedef  vector<Tii> VTii;
+
+typedef  tuple<int, int> Coords;
+typedef  vector<Coords> VecCoords;
 
 class Node {
 public:
-    Node(Node* p, Tii g, Stone s) :
+    Node(Node* p, Coords g, Stone s) :
         Q      (UCB_C0),
         wp     (0),
         win    (0),
@@ -83,7 +84,7 @@ public:
     int           win;
     int           visit;
     Node*         prev;
-    Tii           grd;
+    Coords        grd;
     Stone         turn;
     bool          leaf;
     vector<Node>  child;

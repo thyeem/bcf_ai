@@ -6,7 +6,7 @@ Draw::Draw() {
 
 Draw::~Draw() {}
 
-Tii Draw::get_move() {
+Coords Draw::get_move() {
     MEVENT event;
     int x, y;
     int w, h;

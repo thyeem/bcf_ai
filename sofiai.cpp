@@ -8,43 +8,43 @@ Sofiai::Sofiai(Board *b) {
 Sofiai::~Sofiai() {}
 
 void Sofiai::set_coeff() {
-    ccc[ "depth"  ] = +1.0e2;
-    ccc[ "score"  ] = +1.2e4;
+    lookup_coeff[ "depth"  ] = +1.0e2;
+    lookup_coeff[ "score"  ] = +1.2e4;
 
-    // score =========================
-    cpt[ "oxxa"   ] = +1.0e4;
-    cpt[ "_oooa"  ] = +2.0e4;
-    cpt[ "_ooooa" ] = +2.0e6;
-    cpt[ "xooooa" ] = +5.0e5;
-    //--------------------------------
-    cpt[ "xooa"   ] = -1.0e4;
-    cpt[ "_xxxa"  ] = -2.0e4;
-    cpt[ "_xxxxa" ] = -2.0e6;
+    // score
+    lookup_coeff[ "oxxa"   ] = +1.0e4;
+    lookup_coeff[ "_oooa"  ] = +2.0e4;
+    lookup_coeff[ "_ooooa" ] = +2.0e6;
+    lookup_coeff[ "xooooa" ] = +5.0e5;
 
-    // move priority =================
-    ppt[ "_ooa"  ]  = 3;
-    ppt[ "oooa"  ]  = 2;
-    ppt[ "ooooa" ]  = 1;
-    ppt[ "oxxa"  ]  = 3;
-    ppt[ "_xxa"  ]  = 3;
-    ppt[ "xxxa"  ]  = 2;
-    ppt[ "xxxxa" ]  = 1;
-    ppt[ "xooa"  ]  = 3;
-    ppt[ "oao"   ]  = 4;
-    ppt[ "xax"   ]  = 4;
-    ppt[ "ooo_a" ]  = 5;
-    ppt[ "xxx_a" ]  = 5;
-    ppt[ "_x_xa" ]  = 6;
-    ppt[ "_o_oa" ]  = 6;
+    lookup_coeff[ "xooa"   ] = -1.0e4;
+    lookup_coeff[ "_xxxa"  ] = -2.0e4;
+    lookup_coeff[ "_xxxxa" ] = -2.0e6;
+
+    // move priority
+    lookup_priority[ "_ooa"  ]  = 3;
+    lookup_priority[ "oooa"  ]  = 2;
+    lookup_priority[ "ooooa" ]  = 1;
+    lookup_priority[ "oxxa"  ]  = 3;
+    lookup_priority[ "_xxa"  ]  = 3;
+    lookup_priority[ "xxxa"  ]  = 2;
+    lookup_priority[ "xxxxa" ]  = 1;
+    lookup_priority[ "xooa"  ]  = 3;
+    lookup_priority[ "oao"   ]  = 4;
+    lookup_priority[ "xax"   ]  = 4;
+    lookup_priority[ "ooo_a" ]  = 5;
+    lookup_priority[ "xxx_a" ]  = 5;
+    lookup_priority[ "_x_xa" ]  = 6;
+    lookup_priority[ "_o_oa" ]  = 6;
 }
 
 Board *Sofiai::gb() {
     return p_board;
 }
 
-//=======================================================================
+//-----------------------------------------------------------------------
 
-Tii Sofiai::next_move() {
+Coords Sofiai::next_move() {
     if ( gb()->moves == 0 ) return make_tuple(N/2, N/2);
     double bestval;
     int x, y;
@@ -52,13 +52,13 @@ Tii Sofiai::next_move() {
     return make_tuple(x, y);
 }
 
-Tfii Sofiai::minimax(Board b, int x, int y, int depth,
-                      bool is_maximizer, float alpha, float beta) {
-    float val;
-    float bestval;
-    int   bestx;
-    int   besty;
-    VTii  child;
+MinimaxNode Sofiai::minimax(Board b, int x, int y, int depth,
+                            bool is_maximizer, float alpha, float beta) {
+    float     val;
+    float     bestval;
+    int       bestx;
+    int       besty;
+    VecCoords child;
 
     if ( x != -1 ) {
         // called when depth >= 1
@@ -67,10 +67,10 @@ Tfii Sofiai::minimax(Board b, int x, int y, int depth,
             if ( is_maximizer ) {
                 // negative
                 // Entering here implies the game was ended by the previous move
-                bestval = -INF + ccc["depth"] * depth;
+                bestval = -INF + lookup_coeff["depth"] * depth;
             } else {
                 // positive
-                bestval = +INF - ccc["depth"] * depth;
+                bestval = +INF - lookup_coeff["depth"] * depth;
             }
             return make_tuple(bestval, x, y);
         }
@@ -124,20 +124,21 @@ float Sofiai::eval_state(Board &b, int depth) {
     // maximizer's stone: o
     Stone x = b.whose_turn();
     Stone o = ( x == BLACK ) ? WHITE : BLACK;
-    float f_depth = -ccc["depth"] * depth;
-    float f_score = +ccc["score"] * ( pow(1. * b.get_score(o), 1.4) -
-                                      pow(1. * b.get_score(x), 1.4) );
-    float f_pt    = 0;
-
+    float f_depth = -lookup_coeff["depth"] * depth;
+    float f_score = +lookup_coeff["score"] *
+                     ( pow(1. * b.get_score(o), 1.4) -
+                       pow(1. * b.get_score(x), 1.4) );
+    float f_pt = 0;
     analyze_pt(b, o, x, 2);
-    for ( auto r : cpt ) {
-        f_pt += cpt[r.first] * get<0>(mpt[r.first]);
+
+    for ( auto r : lookup_coeff ) {
+        f_pt += lookup_coeff[r.first] * get<0>(lookup_pattern[r.first]);
     }
     return f_depth + f_score + f_pt;
 }
 
 void Sofiai::analyze_pt(Board &b, Stone o, Stone x, int mode) {
-    mpt.clear();
+    lookup_pattern.clear();
     if ( mode == 2 ) {
     // evaluate scoring
         for ( int i = 0; i < N; i++ ) {
@@ -199,13 +200,13 @@ void Sofiai::find_pt(Board &b, int i, int j, Stone o, Stone x, string pt) {
     if ( find_pt_inline(b, i, j,  1, -1, o, x, pt) ) count++;
     if ( find_pt_inline(b, i, j, -1,  1, o, x, pt) ) count++;
     if ( find_pt_inline(b, i, j, -1, -1, o, x, pt) ) count++;
-    if ( count ) get<0>(mpt[pt]) += count;
+    if ( count ) get<0>(lookup_pattern[pt]) += count;
 }
 
 bool Sofiai::find_pt_inline(Board &b, int i, int j, int di, int dj,
                             Stone o, Stone x, string pt) {
     int size = pt.length();
-    VTii *vg = &get<1>(mpt[pt]);
+    VecCoords *vg = &get<1>(lookup_pattern[pt]);
 
     for ( int s = 0; s < size; s++ ) {
         if ( !b.in_range(i + s*di, j + s*dj) ) return false;
@@ -221,35 +222,36 @@ bool Sofiai::find_pt_inline(Board &b, int i, int j, int di, int dj,
     return true;
 }
 
-//=======================================================================
+//-----------------------------------------------------------------------
 
-VTii Sofiai::get_child(Board &b, int mode) {
-    VTii child;
-    Mgf  mch;
-    VTfg vch;
+VecCoords Sofiai::get_child(Board &b, int mode) {
+    VecCoords child;
+    map<Coords, double>  lookup_coords;
+    VecCoordsValue vec_coords_val;
     Stone x = b.whose_turn();
     Stone o = ( x == BLACK ) ? WHITE : BLACK;
     analyze_pt(b, o, x, mode);
 
-    for ( auto r : mpt ) {
+    for ( auto r : lookup_pattern ) {
         string pt = r.first;
-        VTii    v = get<1>(mpt[pt]);
+        VecCoords v = get<1>(lookup_pattern[pt]);
         for ( auto q : v ) {
             int i = get<0>(q);
             int j = get<1>(q);
             if ( !b.check_3_3(i, j) ) {
-                if ( ( !mch[q] ) ||
-                     ( mch[q] > ppt[pt] ) ) mch[q] = ppt[pt];
+                if ( ( !lookup_coords[q] ) ||
+                     ( lookup_coords[q] > lookup_priority[pt] ) )
+                    lookup_coords[q] = lookup_priority[pt];
             }
         }
     }
 
     // sort move candidates by priority value
-    for ( auto r : mch ) {
-        vch.emplace_back(r.second, r.first);
+    for ( auto r : lookup_coords ) {
+        vec_coords_val.emplace_back(r.second, r.first);
     }
-    sort(vch.begin(), vch.end());
-    for ( auto r : vch ) {
+    sort(vec_coords_val.begin(), vec_coords_val.end());
+    for ( auto r : vec_coords_val ) {
         child.push_back(get<1>(r));
     }
 

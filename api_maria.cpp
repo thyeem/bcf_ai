@@ -5,7 +5,8 @@
 int main (int argc, char* argv[]) {
     Board *pb = new Board;
     if ( argc < 2 ) {
-        cerr << "No input file.\n" << endl;
+        cerr << "No input file.\n"
+             << endl;
         return 0;
     }
     pb->read_board(argv[1]);

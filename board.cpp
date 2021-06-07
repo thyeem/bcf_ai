@@ -1,11 +1,11 @@
  #include "board.h"
 
-Board::Board() : turn(BLACK), 
-                 scoreB(0), 
-                 scoreW(0), 
+Board::Board() : turn(BLACK),
+                 scoreB(0),
+                 scoreW(0),
                  X(-1),
                  Y(-1),
-                 moves(0), 
+                 moves(0),
                  volume(0.),
                  density(0.),
                  eB(50.0),
@@ -121,7 +121,7 @@ bool Board::in_range(int x, int y) {
 bool Board::check_quit(int x, int y) {
     if ( scoreB >= WP ) return true;
     if ( scoreW >= WP ) return true;
-    if ( check_quit_inline(x, y, -1,  0) +  
+    if ( check_quit_inline(x, y, -1,  0) +
          check_quit_inline(x, y,  1,  0) + 1 == GOAL ) return true;
     if ( check_quit_inline(x, y,  0, -1) +
          check_quit_inline(x, y,  0,  1) + 1 == GOAL ) return true;
@@ -145,11 +145,11 @@ int Board::check_quit_inline(int x, int y, int dx, int dy) {
 
 bool Board::check_3_3(int x, int y) {
     int count = 0;
-    if ( check_3_3_inline(x, y, -1,  0) +   
+    if ( check_3_3_inline(x, y, -1,  0) +
          check_3_3_inline(x, y,  1,  0) + 1 == 3 ) count++;
-    if ( check_3_3_inline(x, y,  0, -1) +   
+    if ( check_3_3_inline(x, y,  0, -1) +
          check_3_3_inline(x, y,  0,  1) + 1 == 3 ) count++;
-    if ( check_3_3_inline(x, y, -1, -1) +   
+    if ( check_3_3_inline(x, y, -1, -1) +
          check_3_3_inline(x, y,  1,  1) + 1 == 3 ) count++;
     if ( count == 0 ) return false;
     if ( check_3_3_inline(x, y, -1,  1) +
@@ -197,7 +197,7 @@ void Board::read_board(string file) {
     if ( !fin.good() ) return;
     vector<string> data;
     vector<string> grid;
-    string token; 
+    string token;
     while (getline(fin, token, ':')) {
         data.emplace_back(token);
     }
@@ -216,7 +216,7 @@ void Board::read_board(string file) {
     for ( int i = 0; i < N*N; i++ ) {
         int x = i % N;
         int y = i / N;
-        Stone stone = (stoi(grid[i]) ==  1) ? BLACK : 
+        Stone stone = (stoi(grid[i]) ==  1) ? BLACK :
                       (stoi(grid[i]) == -1) ? WHITE : EMPTY;
         board[y][x] = stone;
     }
@@ -225,20 +225,30 @@ void Board::read_board(string file) {
 void Board::write_board(string file) {
     ofstream fout(file);
     int iturn = (turn == BLACK) ? -1 : 1;
-    fout << X << ":";
-    fout << Y << ":";
-    fout << moves  << ":";
-    fout << iturn  << ":";
-    fout << scoreB << ":";
-    fout << scoreW << ":";
-    fout << int(eB*10) << ":";
-    fout << int(1000-(eB*10)) << ":";
+    fout << X
+         << ":";
+    fout << Y
+         << ":";
+    fout << moves
+         << ":";
+    fout << iturn
+         << ":";
+    fout << scoreB
+         << ":";
+    fout << scoreW
+         << ":";
+    fout << int(eB*10)
+         << ":";
+    fout << int(1000-(eB*10))
+         << ":";
+
     for ( int j = 0; j < N; j++ ) {
         for ( int i = 0; i < N; i++ ) {
-            int stone = (board[j][i] == BLACK) ?  1 : 
+            int stone = (board[j][i] == BLACK) ?  1 :
                         (board[j][i] == WHITE) ? -1 : 0;
             if ( (i == N-1) && (j == N-1) ) fout << stone;
-            else fout << stone << ":"; 
+            else fout << stone
+                      << ":";
         }
     }
     fout.close();
@@ -252,27 +262,55 @@ void Board::print_board(bool dump_candy) {
             board[i][j] = CANDY;
         }
     }
+
     cout << endl;
-    cout << setw(4) << " ";
+    cout << setw(4)
+         << " ";
+
     for ( int i = 0; i < N; i++ ) {
-        cout << i % 10 << " ";
+        cout << i % 10
+             << " ";
     }
     cout << endl;
     for ( int i = 0; i < N; i++ ) {
-        cout << setw(3) << i % 10 << " ";
+
+        cout << setw(3)
+             << i % 10
+             << " ";
+
         for ( int j = 0; j < N; j++ ) {
             if ( board[i][j] == CANDY ) {
-                cout << TC_GREEN << "+" << TC_RESET << " ";
+
+                cout << TC_GREEN
+                     << "+"
+                     << TC_RESET
+                     << " ";
+
             } else if ( is_last_move(i, j) ) {
-                if ( board[i][j] == BLACK ) cout << TC_GREEN << "x" << TC_RESET << " ";
-                if ( board[i][j] == WHITE ) cout << TC_GREEN << "o" << TC_RESET << " ";
+
+                if ( board[i][j] == BLACK ) cout << TC_GREEN
+                                                 << "x"
+                                                 << TC_RESET
+                                                 << " ";
+                if ( board[i][j] == WHITE ) cout << TC_GREEN
+                                                 << "o"
+                                                 << TC_RESET
+                                                 << " ";
             } else {
+
                 if ( board[i][j] == BLACK ) {
-                    cout << TC_BLUE << "x" << TC_RESET << " ";
+                    cout << TC_BLUE
+                         << "x"
+                         << TC_RESET
+                         << " ";
                 } else if ( board[i][j] == WHITE ) {
-                    cout << TC_RED << "o" << TC_RESET << " ";
+                    cout << TC_RED
+                         << "o"
+                         << TC_RESET
+                         << " ";
                 } else {
-                    cout << "\u2219" << " ";
+                    cout << "\u2219"
+                         << " ";
                 }
             }
         }

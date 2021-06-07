@@ -24,7 +24,7 @@ public:
     void    wait_for_q          ();
     bool    wait_for_s          ();
     char    get_char            ();
-    Tii     get_move            ();
+    Coords  get_move            ();
 
 private:
     WINDOW*    wrap;

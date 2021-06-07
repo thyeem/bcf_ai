@@ -89,7 +89,7 @@ Node* Mariai::get_maxW_child(Node* node) {
     return it;
 }
 
-Tii Mariai::next_move() {
+Coords Mariai::next_move() {
     if ( gb()->moves == 0 ) return make_tuple(N/2, N/2);
     Node root(NULL, make_tuple(-1, -1), EMPTY);
     Node* roof = &root;
@@ -160,7 +160,7 @@ void Mariai::expand_node(Node* node, Board &vg) {
     node->leaf = false;
 }
 
-void Mariai::insert_node(Node* node, Tii q, Stone s) {
+void Mariai::insert_node(Node* node, Coords q, Stone s) {
     node->child.push_back( Node(node, q, s) );
 }
 
@@ -196,7 +196,7 @@ bool Mariai::is_expandable(Node* node) {
 }
 
 bool Mariai::move_check_quit_vg(Node* node, Board &vg) {
-    Tii q = node->grd;
+    Coords q = node->grd;
     int x = get<0>(q);
     int y = get<1>(q);
     vg.make_move(x, y);
@@ -211,7 +211,7 @@ void Mariai::show_progress() {
         gd()->dump_progress(1.0 * itr / PLAYOUTS);
 }
 
-Tii Mariai::pick_best(Node* node) {
+Coords Mariai::pick_best(Node* node) {
     Node* best = get_maxV_child(node);
     gb()->eB = (best->turn == BLACK) ? 100*best->wp : 100*(1-best->wp);
     gb()->eW = 100 - gb()->eB;
@@ -229,12 +229,25 @@ void Mariai::print_tree(Node* node, int sw) {
         default: color = "E";
     }
     if ( head->Q > -2 ) {
-        cout << setw(sw) << "[";
-        cout << "(" << get<0>(head->grd) << ", "
-             << get<1>(head->grd) << ", " << color << "), "
-             << "Q: " << head->Q << ", "
-             << "w: " << head->win << ", "
-             << "v: " << head->visit << "]" << endl;
+        cout << setw(sw)
+             << "[";
+        cout << "("
+             << get<0>(head->grd)
+             << ", "
+             << get<1>(head->grd)
+             << ", "
+             << color
+             << "), "
+             << "Q: "
+             << head->Q
+             << ", "
+             << "w: "
+             << head->win
+             << ", "
+             << "v: "
+             << head->visit
+             << "]"
+             << endl;
     }
     if ( !head->leaf ) {
         vector<size_t> idx = sort_icV(head);
@@ -247,7 +260,7 @@ void Mariai::print_tree(Node* node, int sw) {
 // POLICY: NEXT MOVE CANDIDATES =========================================
 
 void Mariai::gen_candy(Board &b) {
-    VTii sweet;
+    VecCoords sweet;
     candy.clear();
     b.update_density();
     analyze_pattern(b, NORMAL);

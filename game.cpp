@@ -88,7 +88,7 @@ void Game::play_game() {
     bool   quit = false;
     int    stop = 0;
     Player player;
-    Tii    grd;
+    Coords grd;
     Sofiai sofia( gb() );
     Mariai maria( gb(), gd());
     gd()->init_screen_win( gb() );
