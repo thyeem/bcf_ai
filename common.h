@@ -28,10 +28,8 @@ using namespace std;
 #define UCB_C              0.5
 #define UCB_POW            0.5
 #define UCB_C0             (log(PLAYOUTS))
+#define EARLY_CUT          400000
 #define CUT_DENSITY        2.19
-#define ITER_DECISION      400000
-#define ITER_PRUNING       600000
-#define PRUNE_RANK         7
 
 #define PRINT_TREE         0
 #define AI_MATCH           1
@@ -92,47 +90,10 @@ public:
     vector<char>  icQ;
 };
 
-class Key_hasher {
-public:
-    size_t operator()(const tuple<Tii, Stone> &t) const {
-        return (( hash<int>() (get<0>(get<0>(t))) << 1) ^
-                ( hash<int>() (get<1>(get<0>(t))) << 1) ^
-                ( hash<int>() (get<1>(t) << 1 )) >> 1);
-    }
-};
-
 template <typename T>
 void uniq_vec(vector<T> &vec) {
     sort(vec.begin(), vec.end());
     vec.erase(unique(vec.begin(), vec.end()), vec.end());
-}
-
-template <typename T>
-void sort_vec_more(vector<T> &vec) {
-    sort(vec.begin(), vec.end(), greater<T>());
-}
-
-template <typename T>
-void sort_vec_less(vector<T> &vec) {
-    sort(vec.begin(), vec.end(), less<T>());
-}
-
-template <typename K, typename V>
-vector<pair<K, V>> sort_map_more(map<K, V> &map) {
-    vector<pair<K, V>> vmap(map.begin(), map.end());
-    sort(vmap.begin(), vmap.end(),
-         [] (pair<K, V> const &p1, pair<K, V> const &p2)
-         { return p1.second > p2.second; });
-    return vmap;
-}
-
-template <typename K, typename V>
-vector<pair<K, V>> sort_map_less(map<K, V> &map) {
-    vector<pair<K, V>> vmap(map.begin(), map.end());
-    sort(vmap.begin(), vmap.end(),
-         [] (pair<K, V> const &p1, pair<K, V> const &p2)
-         { return p1.second < p2.second; });
-    return vmap;
 }
 
 #endif
