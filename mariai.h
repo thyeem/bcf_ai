@@ -53,18 +53,4 @@ private:
   int itr;
 };
 
-template <typename T1, typename T2> struct more_second {
-  typedef pair<T1, T2> type;
-  bool operator()(const type &a, const type &b) const {
-    return a.second > b.second;
-  }
-};
-
-template <typename T1, typename T2> struct less_second {
-  typedef pair<T1, T2> type;
-  bool operator()(const type &a, const type &b) const {
-    return a.second < b.second;
-  }
-};
-
 #endif
