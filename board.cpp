@@ -94,84 +94,133 @@ bool Board::check_quit(int x, int y) {
     return true;
   if (scoreW >= WP)
     return true;
-  if (check_quit_inline(x, y, -1, 0) + check_quit_inline(x, y, 1, 0) + 1 ==
-      GOAL)
+  if (is_nstones_made(x, y, 0, GOAL))
     return true;
-  if (check_quit_inline(x, y, 0, -1) + check_quit_inline(x, y, 0, 1) + 1 ==
-      GOAL)
+  if (is_nstones_made(x, y, 1, GOAL))
     return true;
-  if (check_quit_inline(x, y, -1, -1) + check_quit_inline(x, y, 1, 1) + 1 ==
-      GOAL)
+  if (is_nstones_made(x, y, 2, GOAL))
     return true;
-  if (check_quit_inline(x, y, -1, 1) + check_quit_inline(x, y, 1, -1) + 1 ==
-      GOAL)
+  if (is_nstones_made(x, y, 3, GOAL))
     return true;
   return false;
 }
 
-int Board::check_quit_inline(int x, int y, int dx, int dy) {
-  int rows = 0;
+bool Board::is_nstones_made(int x, int y, int npi_over_four, int n) {
+  // npi_over_four in Z/4Z = {0, 1, 2, 3}
+  // meaning the angle of n * pi/4 with the line
+
+  switch (npi_over_four) {
+  case 0:
+    return count_straight(x, y, 1, 0) + count_straight(x, y, -1, 0) + 1 == n;
+  case 1:
+    return count_straight(x, y, 1, 1) + count_straight(x, y, -1, -1) + 1 == n;
+  case 2:
+    return count_straight(x, y, 0, 1) + count_straight(x, y, 0, -1) + 1 == n;
+  case 3:
+    return count_straight(x, y, 1, -1) + count_straight(x, y, -1, 1) + 1 == n;
+  }
+  return false;
+}
+
+int Board::count_straight(int x, int y, int dx, int dy) {
+  int count = 0;
   while (1) {
     x += dx;
     y += dy;
     if (!in_range(x, y))
-      return rows;
+      break;
     if (board[x][y] != turn)
-      return rows;
-    else
-      rows++;
+      break;
+    count++;
   }
+  return count;
 }
 
 bool Board::check_3_3(int x, int y) {
   int count = 0;
-  if (check_3_3_inline(x, y, -1, 0) + check_3_3_inline(x, y, 1, 0) + 1 == 3)
+  if (is_nstones_made_open(x, y, 0, 3))
     count++;
-  if (check_3_3_inline(x, y, 0, -1) + check_3_3_inline(x, y, 0, 1) + 1 == 3)
+  if (is_nstones_made_open(x, y, 1, 3))
     count++;
-  if (check_3_3_inline(x, y, -1, -1) + check_3_3_inline(x, y, 1, 1) + 1 == 3)
+  if (is_nstones_made_open(x, y, 2, 3))
     count++;
   if (count == 0)
     return false;
-  if (check_3_3_inline(x, y, -1, 1) + check_3_3_inline(x, y, 1, -1) + 1 == 3)
+  if (is_nstones_made_open(x, y, 3, 3))
     count++;
-  return (count >= 2) ? true : false;
+  return (count > 1) ? true : false;
 }
 
-int Board::check_3_3_inline(int x, int y, int dx, int dy) {
-  int rows = 0;
+bool Board::is_nstones_made_open(int x, int y, int npi_over_four, int n) {
+  // npi_over_four in Z/4Z = {0, 1, 2, 3}
+  // meaning the angle of n * pi/4 with the line
+  int fst, snd;
+  switch (npi_over_four) {
+  case 0:
+    fst = count_straight_open(x, y, 1, 0);
+    if (fst == -1)
+      return false;
+    snd = count_straight(x, y, -1, 0);
+    return (snd == -1) ? false : fst + 1 + snd == n;
+  case 1:
+    fst = count_straight_open(x, y, 1, 1);
+    if (fst == -1)
+      return false;
+    snd = count_straight(x, y, -1, -1);
+    return (snd == -1) ? false : fst + 1 + snd == n;
+  case 2:
+    fst = count_straight_open(x, y, 0, 1);
+    if (fst == -1)
+      return false;
+    snd = count_straight(x, y, 0, -1);
+    return (snd == -1) ? false : fst + 1 + snd == n;
+  case 3:
+    fst = count_straight_open(x, y, 1, -1);
+    if (fst == -1)
+      return false;
+    snd = count_straight(x, y, -1, 1);
+    return (snd == -1) ? false : fst + 1 + snd == n;
+  }
+  return false;
+}
+
+int Board::count_straight_open(int x, int y, int dx, int dy) {
+  int count = 0;
   while (1) {
     x += dx;
     y += dy;
     if (!in_range(x, y))
-      return -N;
+      return -1;
     if (board[x][y] == EMPTY)
-      return rows;
+      return count;
     if (board[x][y] != turn)
-      return -N;
-    rows++;
+      return -1;
+    count++;
   }
 }
 
 void Board::bite_move(int x, int y) {
-  bite_move_inline(x, y, -1, 0);
-  bite_move_inline(x, y, 1, 0);
-  bite_move_inline(x, y, 0, -1);
-  bite_move_inline(x, y, 0, 1);
-  bite_move_inline(x, y, 1, 1);
-  bite_move_inline(x, y, -1, 1);
-  bite_move_inline(x, y, 1, -1);
-  bite_move_inline(x, y, -1, -1);
+  bite_move_towards(x, y, -1, 0);
+  bite_move_towards(x, y, 1, 0);
+  bite_move_towards(x, y, 0, -1);
+  bite_move_towards(x, y, 0, 1);
+  bite_move_towards(x, y, 1, 1);
+  bite_move_towards(x, y, -1, 1);
+  bite_move_towards(x, y, 1, -1);
+  bite_move_towards(x, y, -1, -1);
 }
 
-void Board::bite_move_inline(int x, int y, int dx, int dy) {
+void Board::bite_move_towards(int x, int y, int dx, int dy) {
   if (!in_range(x + 3 * dx, y + 3 * dy))
     return;
+
   if (board[x + 3 * dx][y + 3 * dy] == turn &&
       board[x + 2 * dx][y + 2 * dy] == last &&
       board[x + 1 * dx][y + 1 * dy] == last) {
+
     board[x + 2 * dx][y + 2 * dy] = EMPTY;
     board[x + 1 * dx][y + 1 * dy] = EMPTY;
+
     if (turn == BLACK)
       scoreB += 2;
     else
@@ -183,9 +232,11 @@ void Board::read_board(string file) {
   ifstream fin(file);
   if (!fin.good())
     return;
+
   vector<string> data;
   vector<string> grid;
   string token;
+
   while (getline(fin, token, ':')) {
     data.emplace_back(token);
   }
@@ -201,6 +252,7 @@ void Board::read_board(string file) {
   eB = stoi(data[6]) / 10.;
   eW = stoi(data[7]) / 10.;
   grid = vector<string>(data.begin() + 8, data.end());
+
   for (int i = 0; i < N * N; i++) {
     int x = i % N;
     int y = i / N;

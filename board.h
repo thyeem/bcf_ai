@@ -19,17 +19,19 @@ public:
   Stone last_turn();
   Stone whose_turn();
 
-  void print_board(bool dump_candy);
-  void read_board(string file);
-  void write_board(string file);
   bool in_range(int x, int y);
   int make_move(int x, int y);
   bool check_quit(int x, int y);
-  int check_quit_inline(int x, int y, int dx, int dy);
   bool check_3_3(int x, int y);
-  int check_3_3_inline(int x, int y, int dx, int dy);
+  int count_straight(int x, int y, int dx, int dy);
+  int count_straight_open(int x, int y, int dx, int dy);
+	bool is_nstones_made(int x, int y, int npi_over_four, int n);
+	bool is_nstones_made_open(int x, int y, int npi_over_four, int n);
   void bite_move(int x, int y);
-  void bite_move_inline(int x, int y, int dx, int dy);
+  void bite_move_towards(int x, int y, int dx, int dy);
+  void print_board(bool dump_candy);
+  void read_board(string file);
+  void write_board(string file);
 
 private:
   Stone board[N][N];
