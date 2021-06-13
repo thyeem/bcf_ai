@@ -1,8 +1,9 @@
 #include "board.h"
 
 Board::Board()
-    : turn(BLACK), scoreB(0), scoreW(0), X(-1), Y(-1), moves(0), eB(50.0),
-      eW(50.0) {
+    : turn(BLACK), scoreB(0), scoreW(0), last_x(-1), last_y(-1), moves(0),
+      inf_x(N / 2 - 2), sup_x(N / 2 + 2), inf_y(N / 2 - 2), sup_y(N / 2 + 2),
+      eB(50.0), eW(50.0) {
   for (int i = 0; i < N; i++) {
     for (int j = 0; j < N; j++) {
       board[i][j] = EMPTY;
@@ -14,7 +15,17 @@ Board::~Board() {}
 
 Stone Board::get_stone(int x, int y) { return board[x][y]; }
 
-void Board::set_stone(int x, int y, Stone s) { board[x][y] = s; }
+void Board::set_stone(int x, int y, Stone s) {
+  board[x][y] = s;
+  if (x - 2 < inf_x)
+    inf_x = (x - 2 < 0) ? 0 : x - 2;
+  if (x + 2 > sup_x)
+    sup_x = (x + 2 >= N) ? N - 1 : x + 2;
+  if (y - 2 < inf_y)
+    inf_y = (y - 2 < 0) ? 0 : y - 2;
+  if (y + 2 > sup_y)
+    sup_y = (y + 2 >= N) ? N - 1 : y + 2;
+}
 
 int Board::get_score(Stone s) { return (s == BLACK) ? scoreB : scoreW; }
 
@@ -26,11 +37,11 @@ void Board::set_score(Stone s, int score) {
   }
 }
 
-bool Board::is_last_move(int x, int y) { return (x == X && y == Y); }
+bool Board::is_last_move(int x, int y) { return (x == last_x && y == last_y); }
 
 void Board::set_last_move(int x, int y) {
-  X = x;
-  Y = y;
+  last_x = x;
+  last_y = y;
 }
 
 void Board::toggle_turn() {
@@ -242,8 +253,8 @@ void Board::read_board(string file) {
   }
   fin.close();
 
-  X = stoi(data[0]);
-  Y = stoi(data[1]);
+  last_x = stoi(data[0]);
+  last_y = stoi(data[1]);
   moves = stoi(data[2]);
   turn = (stoi(data[3]) == 1) ? BLACK : WHITE;
   last = (turn == BLACK) ? WHITE : BLACK;
@@ -266,8 +277,8 @@ void Board::read_board(string file) {
 void Board::write_board(string file) {
   ofstream fout(file);
   int iturn = (turn == BLACK) ? -1 : 1;
-  fout << X << ":";
-  fout << Y << ":";
+  fout << last_x << ":";
+  fout << last_y << ":";
   fout << moves << ":";
   fout << iturn << ":";
   fout << scoreB << ":";

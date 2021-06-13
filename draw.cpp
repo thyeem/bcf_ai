@@ -1,4 +1,5 @@
 #include "draw.h"
+#include <curses.h>
 
 Draw::Draw() { init_screen_std(); }
 
@@ -77,7 +78,7 @@ void Draw::dump_board(Board *b) {
       if (b->get_stone(i, j) == EMPTY) {
         mvwaddch(win, j, 2 * i, ACS_BULLET);
       } else if (b->get_stone(i, j) == CANDY) {
-        mvwaddch(win, j, 2 * i, ACS_BULLET);
+        mvwaddch(win, j, 2 * i, ACS_HLINE);
       } else if (b->get_stone(i, j) == BLACK) {
         mvwaddch(win, j, 2 * i, 'x');
       } else {
@@ -86,12 +87,12 @@ void Draw::dump_board(Board *b) {
       wattroff(win, COLOR_PAIR(b->get_stone(i, j)));
 
       if (b->is_last_move(i, j) && b->moves > 0) {
-        wattron(win, COLOR_PAIR(3));
+        wattron(win, COLOR_PAIR(4));
         if (b->get_stone(i, j) == BLACK)
           mvwaddch(win, j, 2 * i, 'x');
         else
           mvwaddch(win, j, 2 * i, 'o');
-        wattroff(win, COLOR_PAIR(3));
+        wattroff(win, COLOR_PAIR(4));
       }
     }
   }
@@ -175,8 +176,8 @@ void Draw::init_screen_std() {
   init_pair(0, COLOR_WHITE, COLOR_BLACK);
   init_pair(1, COLOR_BLUE, COLOR_BLACK);
   init_pair(2, COLOR_RED, COLOR_BLACK);
-  init_pair(3, COLOR_YELLOW, COLOR_BLACK);
-  init_pair(5, COLOR_GREEN, COLOR_BLACK);
+  init_pair(3, COLOR_CYAN, COLOR_BLACK);
+  init_pair(4, COLOR_YELLOW, COLOR_BLACK);
 }
 
 void Draw::init_screen_win(Board *b) {

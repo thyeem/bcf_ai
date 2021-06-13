@@ -11,6 +11,7 @@ public:
   Board *gb();
   Draw *gd();
   int fastrand();
+  int random_move(Board &b, bool is_move_x);
   void gen_candy(Board &b);
   void refine_candy(Board &b);
   void analyze_pattern(Board &b, size_t size);
@@ -25,7 +26,6 @@ public:
   vector<size_t> sort_icV(Node *node);
   vector<size_t> sort_icW(Node *node);
   Node *get_maxV_child(Node *node);
-  Node *get_maxW_child(Node *node);
   double calc_ucb(Node *node);
   void init_tree(Node *roof, Board &b);
   void run_mcts(Node *roof, Board &b);

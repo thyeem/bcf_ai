@@ -24,10 +24,9 @@ using namespace std;
 #define WP 10
 #define BCF 1
 #define PLAYOUTS 1200000
-#define BRANCHING 5
-#define UCB_C 1.414
+#define BRANCHING 20
+#define UCB_C 0.4
 #define UCB_POW 0.5
-#define UCB_C0 (log(PLAYOUTS))
 #define EARLY_CUT PLAYOUTS / 3
 
 #define PRINT_CANDY 1
@@ -66,7 +65,7 @@ typedef vector<Coords> VecCoords;
 class Node {
 public:
   Node(Node *p, Coords g, Stone s)
-      : Q(UCB_C0), wp(0), win(0), visit(0), prev(p), grd(g), turn(s),
+      : Q(100.), wp(0), win(0), visit(0), prev(p), grd(g), turn(s),
         leaf(true) {}
   ~Node() {}
 

@@ -14,7 +14,6 @@ DEP=$(OBJ:%.o=%.d)
 all: $(TARGET)
 $(TARGET): $(OBJ)
 	$(CXX) -o $@ $^ $(LDFLAGS)
-	make clean
 
 -include $(DEP)
 %.o: %.cpp
@@ -28,7 +27,6 @@ DEP=$(OBJ:%.o=%.d)
 
 sofia: $(OBJ)
 	$(CXX) -o $@ $^ $(LDFLAGS)
-	make clean
 
 -include $(DEP)
 %.o: %.cpp
@@ -42,7 +40,6 @@ DEP=$(OBJ:%.o=%.d)
 
 maria: $(OBJ)
 	$(CXX) -o $@ $^ $(LDFLAGS)
-	make clean
 
 -include $(DEP)
 %.o: %.cpp
@@ -53,15 +50,9 @@ maria: $(OBJ)
 sofimarie:
 	make sofia
 	make maria
-	make clean
 
 
 clean:
 	rm -f *.o
 	rm -f *.d
-
-
-clean-all:
-	make clean
 	rm -f $(TARGET) sofia maria
-

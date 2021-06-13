@@ -41,11 +41,15 @@ private:
   Player playerW;
   int scoreB;
   int scoreW;
-  int X;
-  int Y;
+  int last_x;
+  int last_y;
 
 public:
   int moves;
+	int inf_x;
+	int sup_x;
+	int inf_y;
+	int sup_y;
   double eB;
   double eW;
   VecCoords candy;

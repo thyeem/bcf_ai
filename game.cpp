@@ -131,8 +131,8 @@ void Game::play_game() {
     b.toggle_turn();
     maria.gen_candy(b);
     for (auto q : maria.candy) {
-      int i = get<0>(q);
-      int j = get<1>(q);
+      int i, j;
+      tie(i, j) = q;
       b.set_stone(i, j, CANDY);
     }
     b.toggle_turn();
