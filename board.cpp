@@ -171,25 +171,25 @@ bool Board::is_nstones_made_open(int x, int y, int npi_over_four, int n) {
     fst = count_straight_open(x, y, 1, 0);
     if (fst == -1)
       return false;
-    snd = count_straight(x, y, -1, 0);
+    snd = count_straight_open(x, y, -1, 0);
     return (snd == -1) ? false : fst + 1 + snd == n;
   case 1:
     fst = count_straight_open(x, y, 1, 1);
     if (fst == -1)
       return false;
-    snd = count_straight(x, y, -1, -1);
+    snd = count_straight_open(x, y, -1, -1);
     return (snd == -1) ? false : fst + 1 + snd == n;
   case 2:
     fst = count_straight_open(x, y, 0, 1);
     if (fst == -1)
       return false;
-    snd = count_straight(x, y, 0, -1);
+    snd = count_straight_open(x, y, 0, -1);
     return (snd == -1) ? false : fst + 1 + snd == n;
   case 3:
     fst = count_straight_open(x, y, 1, -1);
     if (fst == -1)
       return false;
-    snd = count_straight(x, y, -1, 1);
+    snd = count_straight_open(x, y, -1, 1);
     return (snd == -1) ? false : fst + 1 + snd == n;
   }
   return false;
