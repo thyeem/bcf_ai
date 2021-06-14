@@ -27,10 +27,10 @@ using namespace std;
 #define BRANCHING 20
 #define UCB_C 0.4
 #define UCB_POW 0.5
-#define EARLY_CUT PLAYOUTS / 3
+#define EARLY_CUT (PLAYOUTS / 3)
 
 #define PRINT_CANDY 1
-#define PRINT_TREE 0
+#define PRINT_TREE 1
 #define AI_MATCH 1
 #define AI_QUIZ 0
 #define QUIZ_NUM 4

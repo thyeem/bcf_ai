@@ -1,9 +1,10 @@
 #include "mariai.h"
 
-Mariai::Mariai(Board *b, Draw *d) : itr(0) {
+Mariai::Mariai(Board *b, Draw *d) : it(0) {
   p_board = b;
   p_draw = d;
-  g_seed = random_device{}();
+  random_device rd;
+  mt19937_64 mt64_rand(rd());
 }
 
 Mariai::~Mariai() {}
@@ -12,16 +13,11 @@ Board *Mariai::gb() { return p_board; }
 
 Draw *Mariai::gd() { return p_draw; }
 
-int Mariai::fastrand() {
-  g_seed = (214013 * g_seed + 2531011);
-  return (g_seed >> 16) & 0x7FFF;
-}
-
 int Mariai::random_move(Board &b, bool is_move_x) {
   if (is_move_x) {
-    return (fastrand() % (b.sup_x - b.inf_x + 1)) + b.inf_x;
+    return (int)(mt64_rand() % (b.sup_x - b.inf_x + 1)) + b.inf_x;
   } else {
-    return (fastrand() % (b.sup_y - b.inf_y + 1)) + b.inf_y;
+    return (int)(mt64_rand() % (b.sup_y - b.inf_y + 1)) + b.inf_y;
   }
 }
 
@@ -86,7 +82,7 @@ Coords Mariai::next_move() {
     return make_tuple(N / 2, N / 2);
   Node root(NULL, make_tuple(-1, -1), EMPTY);
   Node *roof = &root;
-  itr = 0;
+  it = 0;
 
   // Init tree: forced first expansion
   init_tree(roof, *gb());
@@ -94,7 +90,10 @@ Coords Mariai::next_move() {
   run_mcts(roof, *gb());
 
 #if PRINT_TREE
-  print_tree(roof, 0);
+  string fname = "tree_" + to_string(time(NULL)) + ".log";
+  ofstream fout(fname, ios::app);
+  print_tree(roof, 0, fout);
+	fout.close();
 #endif
 
   // return make_tuple(-1, -1);
@@ -104,8 +103,7 @@ Coords Mariai::next_move() {
 void Mariai::init_tree(Node *roof, Board &b) { expand_node(roof, b); }
 
 void Mariai::run_mcts(Node *roof, Board &b) {
-  int i = (b.moves == 1) ? 3 * PLAYOUTS / 4 : 0;
-  for (int n = i; n < PLAYOUTS; n++) {
+  for (int n = 0; n < PLAYOUTS; n++) {
     Node *head = NULL;
     Board vg = b;
     bool quit = false;
@@ -121,7 +119,7 @@ void Mariai::run_mcts(Node *roof, Board &b) {
     if (quit)
       return;
     else
-      itr++;
+      it++;
     show_progress();
   }
 }
@@ -208,8 +206,8 @@ bool Mariai::move_check_quit_vg(Node *node, Board &vg) {
 void Mariai::show_progress() {
   if (gd() == NULL)
     return;
-  if (itr % LINE_BUFFER == 0)
-    gd()->dump_progress(1.0 * itr / PLAYOUTS);
+  if (it % LINE_BUFFER == 0)
+    gd()->dump_progress(1.0 * it / PLAYOUTS);
 }
 
 Coords Mariai::pick_best(Node *node) {
@@ -219,9 +217,11 @@ Coords Mariai::pick_best(Node *node) {
   return best->grd;
 }
 
-void Mariai::print_tree(Node *node, int set_width) {
+void Mariai::print_tree(Node *node, int set_width, ofstream &fout) {
   Node *head = node;
   string color;
+  if (!fout.is_open())
+    return;
   switch (head->turn) {
   case BLACK:
     color = "B";
@@ -230,11 +230,11 @@ void Mariai::print_tree(Node *node, int set_width) {
     color = "W";
     break;
   default:
-    color = "E";
+    color = "ROOT";
   }
   if (head->Q > -2) {
-    cout << setw(set_width) << "[";
-    cout << "(" << get<0>(head->grd) << ", " << get<1>(head->grd) << ", "
+    fout << setw(set_width) << "[";
+    fout << "(" << get<0>(head->grd) << ", " << get<1>(head->grd) << ", "
          << color << "), "
          << "Q: " << head->Q << ", "
          << "w: " << head->win << ", "
@@ -243,7 +243,7 @@ void Mariai::print_tree(Node *node, int set_width) {
   if (!head->leaf) {
     vector<size_t> idx = sort_icV(head);
     for (auto i : idx) {
-      print_tree(&head->child[i], set_width + 3);
+      print_tree(&head->child[i], set_width + 3, fout);
     }
   }
 }

@@ -10,7 +10,6 @@ public:
   ~Mariai();
   Board *gb();
   Draw *gd();
-  int fastrand();
   int random_move(Board &b, bool is_move_x);
   void gen_candy(Board &b);
   void refine_candy(Board &b);
@@ -37,7 +36,7 @@ public:
   bool is_expandable(Node *node);
   bool move_check_quit_vg(Node *node, Board &vg);
   void prune_tree(Node *node);
-  void print_tree(Node *node, int sw);
+  void print_tree(Node *node, int set_width, ofstream &fout);
   Coords pick_best(Node *node);
   Coords next_move();
   void show_progress();
@@ -49,8 +48,8 @@ public:
 private:
   Board *p_board;
   Draw *p_draw;
-  unsigned int g_seed;
-  int itr;
+  mt19937_64 mt64_rand;
+  int it;
 };
 
 #endif
