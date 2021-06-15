@@ -1,7 +1,6 @@
 CXX=g++
-INC=
 LIBS=
-CXXFLAGS=-g $(INC) -Ofast -Wall -std=c++14
+CXXFLAGS=-Ofast -Wall -std=c++14
 LDFLAGS=-lncurses $(LIBS)
 TARGET=bcf_ai
 

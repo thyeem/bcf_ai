@@ -21,9 +21,8 @@ public:
   bool on_crux_wing(int x, int y, int di, int dj);
   bool on_perp_wing(int x, int y, int di, int dj);
 
-  void sort_icQ(Node *node);
   vector<size_t> sort_icV(Node *node);
-  vector<size_t> sort_icW(Node *node);
+  void sort_icQ(Node *node);
   Node *get_maxV_child(Node *node);
   float calc_ucb(Node *node);
   void init_tree(Node *roof, Board &b);

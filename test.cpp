@@ -106,20 +106,20 @@ void Test::print_per_move(Board &b, int &lines, int &pass, int nth) {
 }
 
 void Test::print_stats(bool fdump) {
-  float wp;
+  float winning_prob;
   if (!games)
-    wp = 0;
+    winning_prob = 0;
   else
-    wp = 100. * wins / games;
+    winning_prob = 100. * wins / games;
   cout << setw(3) << "ST"
        << " | ";
   cout << "Mariai: " << wins << " / " << games << " (";
-  cout << setprecision(1) << fixed << wp << "%)" << endl;
+  cout << setprecision(1) << fixed << winning_prob << "%)" << endl;
   if (fdump) {
     fout << setw(3) << "ST"
          << " | ";
     fout << "Mariai WP: " << wins << " / " << games << " (";
-    fout << setprecision(1) << fixed << wp << "%)" << endl;
+    fout << setprecision(1) << fixed << winning_prob << "%)" << endl;
   }
 }
 

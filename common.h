@@ -24,9 +24,10 @@ using namespace std;
 #define WP 10
 #define BCF 1
 #define PLAYOUTS 1200000
-#define BRANCHING 5
-#define UCB_C 0.5
+#define BRANCHING 2
+#define UCB_C 0.3
 #define UCB_POW 0.5
+#define MARIAI_DEPTH 4
 #define EARLY_CUT (PLAYOUTS / 3)
 
 #define PRINT_CANDY 1
@@ -39,11 +40,9 @@ using namespace std;
 
 #define PBWIDTH 33
 #define PBSTR "||||||||||||||||||||||||||||||||||||||||"
-#define LINE_BUFFER (PLAYOUTS / 6)
-
-// Sofiai's parameter
+#define LINE_BUFFER (PLAYOUTS / 7)
 #define INF 1.0e7
-#define DEPTH 4
+#define SOFIAI_DEPTH 4
 
 #define TC_RESET "\033[0m"
 #define TC_BLACK "\033[30m"
@@ -64,22 +63,22 @@ typedef vector<Coords> VecCoords;
 
 class Node {
 public:
-  Node(Node *p, Coords g, Stone s)
-      : Q(100.), wp(0), win(0), visit(0), prev(p), grd(g), turn(s),
-        leaf(true) {}
+  Node(Node *p, Coords g, Stone s, uint8_t depth)
+      : Q(100.), win(0), visit(0), prev(p), grd(g), turn(s), leaf(true),
+        depth(depth) {}
   ~Node() {}
 
 public:
   float Q;
-  float wp;
   int win;
   int visit;
   Node *prev;
   Coords grd;
   Stone turn;
   bool leaf;
+  uint8_t depth;
   vector<Node> child;
-  vector<char> icQ;
+  vector<uint8_t> icQ;
 };
 
 template <typename T> void uniq_vec(vector<T> &vec) {

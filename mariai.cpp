@@ -56,15 +56,6 @@ vector<size_t> Mariai::sort_icV(Node *node) {
   return idx;
 }
 
-vector<size_t> Mariai::sort_icW(Node *node) {
-  vector<size_t> idx(node->child.size());
-  iota(idx.begin(), idx.end(), 0);
-  sort(idx.begin(), idx.end(), [&](const size_t a, const size_t b) {
-    return node->child[a].wp > node->child[b].wp;
-  });
-  return idx;
-}
-
 Node *Mariai::get_maxV_child(Node *node) {
   float max = -1;
   Node *it = NULL;
@@ -80,7 +71,7 @@ Node *Mariai::get_maxV_child(Node *node) {
 Coords Mariai::next_move() {
   if (gb()->moves == 0)
     return make_tuple(N / 2, N / 2);
-  Node root(NULL, make_tuple(-1, -1), EMPTY);
+  Node root(NULL, make_tuple(-1, -1), EMPTY, 0);
   Node *roof = &root;
   it = 0;
 
@@ -90,7 +81,8 @@ Coords Mariai::next_move() {
   run_mcts(roof, *gb());
 
 #if PRINT_TREE
-  string fname = "tree_" + to_string(time(NULL)) + ".log";
+  string move = to_string(gb()->moves);
+  string fname = "gtree_" + string(3 - move.length(), '0') + move + ".log";
   ofstream fout(fname, ios::app);
   print_tree(roof, 0, fout);
   fout.close();
@@ -154,7 +146,7 @@ void Mariai::expand_node(Node *node, Board &vg) {
 }
 
 void Mariai::insert_node(Node *node, Coords q, Stone s) {
-  node->child.push_back(Node(node, q, s));
+  node->child.push_back(Node(node, q, s, node->depth + 1));
 }
 
 void Mariai::fast_rollout(Board &vg, bool quit) {
@@ -181,7 +173,6 @@ bool Mariai::backpropagation(Node *node, Node *roof, Stone turn) {
     if (turn == node->turn)
       node->win++;
     node->Q = calc_ucb(node);
-    node->wp = 1. * node->win / node->visit;
     sort_icQ(node);
     node = node->prev;
   }
@@ -189,7 +180,8 @@ bool Mariai::backpropagation(Node *node, Node *roof, Stone turn) {
 }
 
 bool Mariai::is_expandable(Node *node) {
-  return node->leaf && node->visit >= BRANCHING;
+  return node->leaf && (node->visit >= BRANCHING) &&
+         (node->depth < MARIAI_DEPTH);
 }
 
 bool Mariai::move_check_quit_vg(Node *node, Board &vg) {
@@ -212,7 +204,9 @@ void Mariai::show_progress() {
 
 Coords Mariai::pick_best(Node *node) {
   Node *best = get_maxV_child(node);
-  gb()->eB = (best->turn == BLACK) ? 100 * best->wp : 100 * (1 - best->wp);
+  float winning_prob = 1. * best->win / best->visit;
+  gb()->eB =
+      (best->turn == BLACK) ? 100 * winning_prob : 100 * (1 - winning_prob);
   gb()->eW = 100 - gb()->eB;
   return best->grd;
 }
@@ -238,7 +232,8 @@ void Mariai::print_tree(Node *node, int set_width, ofstream &fout) {
          << color << "), "
          << "Q: " << head->Q << ", "
          << "w: " << head->win << ", "
-         << "v: " << head->visit << "]" << endl;
+         << "v: " << head->visit << "]"
+         << "\n";
   }
   if (!head->leaf) {
     vector<size_t> idx = sort_icV(head);
@@ -253,7 +248,7 @@ void Mariai::print_tree(Node *node, int set_width, ofstream &fout) {
 void Mariai::gen_candy(Board &b) {
   candy.clear();
   analyze_pattern(b, 1);
-  if (!candy.size())
+  if (candy.size() < 15)
     analyze_pattern(b, 0);
 }
 
@@ -290,11 +285,11 @@ void Mariai::analyze_pattern(Board &b, size_t size) {
 void Mariai::find_pattern_inline(Board &b, int i, int j, int di, int dj,
                                  size_t size) {
   if (size == 0) {
-    find_pattern_each(b, i, j, di, dj, "sa");
-    find_pattern_each(b, i, j, di, dj, "s_a");
+    find_pattern_each(b, i, j, di, dj, "?=a");
   } else {
     find_pattern_each(b, i, j, di, dj, "sa");
-    find_pattern_each(b, i, j, di, dj, "?=a");
+    find_pattern_each(b, i, j, di, dj, "xooo_a");
+    find_pattern_each(b, i, j, di, dj, "oxxx_a");
     // find_pattern_each(b, i, j, di, dj, "s_a");
     // find_pattern_each(b, i, j, di, dj, "ssa");
     // find_pattern_each(b, i, j, di, dj, "sasa");
