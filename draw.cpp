@@ -129,7 +129,7 @@ void Draw::dump_score(Board *b) {
   printw(" [%s]: %d", b->get_nickname(WHITE).c_str(), b->get_score(WHITE));
 }
 
-void Draw::dump_progress(double pct) {
+void Draw::dump_progress(float pct) {
   int val = (int)(pct * 100);
   int lp = (int)(pct * PBWIDTH);
   int rp = (int)PBWIDTH - lp;
@@ -150,7 +150,7 @@ void Draw::dump_msg(const char *msg) {
   wrefresh(win);
 }
 
-void Draw::dump_EWP(double eB, double eW) {
+void Draw::dump_EWP(float eB, float eW) {
   mvprintw((LINES - N) / 2 - 1, (COLS - 2 * N) / 2,
            "Message: [EWP] B(%.1f%%) - W(%.1f%%)", eB, eW);
   refresh();

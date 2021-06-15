@@ -106,7 +106,7 @@ void Test::print_per_move(Board &b, int &lines, int &pass, int nth) {
 }
 
 void Test::print_stats(bool fdump) {
-  double wp;
+  float wp;
   if (!games)
     wp = 0;
   else

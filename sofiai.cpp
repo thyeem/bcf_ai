@@ -46,7 +46,7 @@ Board *Sofiai::gb() { return p_board; }
 Coords Sofiai::next_move() {
   if (gb()->moves == 0)
     return make_tuple(N / 2, N / 2);
-  double bestval;
+  float bestval;
   int x, y;
   tie(bestval, x, y) = minimax((*gb()), -1, -1, 0, true, -INF, +INF);
   return make_tuple(x, y);
@@ -238,7 +238,7 @@ bool Sofiai::find_pt_inline(Board &b, int i, int j, int di, int dj, Stone o,
 
 VecCoords Sofiai::get_child(Board &b, int mode) {
   VecCoords child;
-  map<Coords, double> lookup_coords;
+  map<Coords, float> lookup_coords;
   VecCoordsValue vec_coords_val;
   Stone x = b.whose_turn();
   Stone o = (x == BLACK) ? WHITE : BLACK;

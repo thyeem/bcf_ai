@@ -3,8 +3,8 @@
 #include "board.h"
 #include "common.h"
 
-typedef tuple<double, int, int> MinimaxNode;
-typedef tuple<double, Coords> CoordsValue;
+typedef tuple<float, int, int> MinimaxNode;
+typedef tuple<float, Coords> CoordsValue;
 typedef vector<CoordsValue> VecCoordsValue;
 
 class Sofiai {
@@ -33,9 +33,9 @@ private:
   Stone cb[N][N];
 
 public:
-  map<string, tuple<double, VecCoords>> lookup_pattern;
-  map<string, double> lookup_coeff;
-  map<string, double> lookup_priority;
+  map<string, tuple<float, VecCoords>> lookup_pattern;
+  map<string, float> lookup_coeff;
+  map<string, float> lookup_priority;
 };
 
 #endif

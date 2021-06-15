@@ -24,13 +24,13 @@ using namespace std;
 #define WP 10
 #define BCF 1
 #define PLAYOUTS 1200000
-#define BRANCHING 20
-#define UCB_C 0.4
+#define BRANCHING 5
+#define UCB_C 0.5
 #define UCB_POW 0.5
 #define EARLY_CUT (PLAYOUTS / 3)
 
 #define PRINT_CANDY 1
-#define PRINT_TREE 1
+#define PRINT_TREE 0
 #define AI_MATCH 1
 #define AI_QUIZ 0
 #define QUIZ_NUM 4
@@ -70,8 +70,8 @@ public:
   ~Node() {}
 
 public:
-  double Q;
-  double wp;
+  float Q;
+  float wp;
   int win;
   int visit;
   Node *prev;

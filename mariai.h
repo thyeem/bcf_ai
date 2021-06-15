@@ -25,7 +25,7 @@ public:
   vector<size_t> sort_icV(Node *node);
   vector<size_t> sort_icW(Node *node);
   Node *get_maxV_child(Node *node);
-  double calc_ucb(Node *node);
+  float calc_ucb(Node *node);
   void init_tree(Node *roof, Board &b);
   void run_mcts(Node *roof, Board &b);
   tuple<bool, Node *> select_path(Node *node, Board &vg);
@@ -40,7 +40,7 @@ public:
   Coords pick_best(Node *node);
   Coords next_move();
   void show_progress();
-  void dump_progress(double pct);
+  void dump_progress(float pct);
 
 public:
   VecCoords candy;

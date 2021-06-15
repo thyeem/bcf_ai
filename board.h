@@ -50,8 +50,8 @@ public:
 	int sup_x;
 	int inf_y;
 	int sup_y;
-  double eB;
-  double eW;
+  float eB;
+  float eW;
   VecCoords candy;
 };
 

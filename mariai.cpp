@@ -21,8 +21,8 @@ int Mariai::random_move(Board &b, bool is_move_x) {
   }
 }
 
-double Mariai::calc_ucb(Node *node) {
-  const double log_playouts = log(PLAYOUTS);
+float Mariai::calc_ucb(Node *node) {
+  const float log_playouts = log(PLAYOUTS);
   if (node->prev == NULL)
     return 1;
   return (1. * node->win / node->visit) +
@@ -36,7 +36,7 @@ void Mariai::sort_icQ(Node *node) {
   int j = 0;
   int size = node->icQ.size();
   char tmp = 0;
-  double tmpQ = 0;
+  float tmpQ = 0;
   for (int i = 1; i < size; i++) {
     tmp = node->icQ[i];
     tmpQ = node->child[tmp].Q;
@@ -66,7 +66,7 @@ vector<size_t> Mariai::sort_icW(Node *node) {
 }
 
 Node *Mariai::get_maxV_child(Node *node) {
-  double max = -1;
+  float max = -1;
   Node *it = NULL;
   for (auto &n : node->child) {
     if (n.visit > max && n.Q > 0) {
@@ -93,7 +93,7 @@ Coords Mariai::next_move() {
   string fname = "tree_" + to_string(time(NULL)) + ".log";
   ofstream fout(fname, ios::app);
   print_tree(roof, 0, fout);
-	fout.close();
+  fout.close();
 #endif
 
   // return make_tuple(-1, -1);
