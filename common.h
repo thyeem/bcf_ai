@@ -56,35 +56,15 @@ using namespace std;
 #define TC_CLEAR "\033[2J"
 
 enum Stone { EMPTY, BLACK, WHITE, CANDY };
+
 enum Player { HUMAN, SOFIAI, MARIAI };
 
 typedef tuple<int, int> Coords;
+
 typedef vector<Coords> VecCoords;
 
-class Node {
-public:
-  Node(Node *p, Coords g, Stone s)
-      : Q(100.), win(0), visit(0), prev(p), grd(g), turn(s), leaf(true) {}
-  ~Node() {}
-
-public:
-  float Q;
-  int win;
-  int visit;
-  Node *prev;
-  Coords grd;
-  Stone turn;
-  bool leaf;
-  vector<Node> children;
-  vector<uint8_t> children_iQ;
-};
-
-template <typename T> void uniq_vec(vector<T> &vec) {
-  sort(vec.begin(), vec.end());
-  vec.erase(unique(vec.begin(), vec.end()), vec.end());
-}
-
 static __uint128_t g_lehmer64_state;
+
 static __uint64_t g_fastrand_state;
 
 static inline void lehmer64_seed() {

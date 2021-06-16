@@ -33,27 +33,27 @@ bool Test::match_play(int nth) {
   bool quit = false;
   int stop = 0;
   int pass = 0;
-  Coords grd;
+  Coords coords;
 
   while (!quit) {
     if (!stop)
       b.toggle_turn();
     if (b.whose_turn() == BLACK) {
       if (!b.moves)
-        grd = make_tuple(N / 2, N / 2);
+        coords = make_tuple(N / 2, N / 2);
       else
-        grd = black.next_move();
+        coords = black.next_move();
     } else {
       if (!b.moves)
-        grd = make_tuple(N / 2, N / 2);
+        coords = make_tuple(N / 2, N / 2);
       else
-        grd = white.next_move();
+        coords = white.next_move();
     }
-    stop = b.make_move(get<0>(grd), get<1>(grd));
+    stop = b.make_move(get<0>(coords), get<1>(coords));
 
     if (!stop) {
       print_per_move(b, lines, pass, nth);
-      quit = b.check_quit(get<0>(grd), get<1>(grd));
+      quit = b.check_quit(get<0>(coords), get<1>(coords));
     }
   }
   print_per_game(b, lines, pass, nth, start_at);

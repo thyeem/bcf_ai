@@ -14,7 +14,7 @@ Board *Mariai::gb() { return p_board; }
 
 Draw *Mariai::gd() { return p_draw; }
 
-int Mariai::random_move(Board &b, bool is_move_x) {
+int Mariai::RandomMove(Board &b, bool is_move_x) {
   if (is_move_x) {
     return (int)random_coords(b.inf_x, b.sup_x);
   } else {
@@ -22,7 +22,7 @@ int Mariai::random_move(Board &b, bool is_move_x) {
   }
 }
 
-float Mariai::calc_ucb(Node *node) {
+float Mariai::calc_ucb(const Node *node) {
   const float log_playouts = log(PLAYOUTS);
   if (node->prev == NULL)
     return 1;
@@ -30,42 +30,23 @@ float Mariai::calc_ucb(Node *node) {
          UCB_C * pow(log_playouts / node->visit, UCB_POW);
 }
 
-void Mariai::sort_children_index_by_Q(Node *node) {
-  node = node->prev;
-  if (node == NULL)
+void Mariai::sort_children_by_Q(Node *node) {
+  if (node->prev == NULL)
     return;
-  int j = 0;
-  int size = node->children_iQ.size();
-  uint8_t tmp = 0;
-  float tmpQ = 0;
-  for (int i = 1; i < size; i++) {
-    tmp = node->children_iQ[i];
-    tmpQ = node->children[tmp].Q;
-    for (j = i;
-         j > 0 && tmpQ > node->children[node->children_iQ[j - 1]].Q;
-         j--) {
-      node->children_iQ[j] = node->children_iQ[j - 1];
-    }
-    node->children_iQ[j] = tmp;
-  }
-}
 
-vector<size_t> Mariai::sort_icV(Node *node) {
-  vector<size_t> indices(node->children.size());
-  iota(indices.begin(), indices.end(), 0);
-  sort(indices.begin(), indices.end(), [&](const size_t a, const size_t b) {
-    return node->children[a].visit > node->children[b].visit;
-  });
-  return indices;
+  sort(node->prev->children_iQ.begin(), node->prev->children_iQ.end(),
+       [&](const size_t a, const size_t b) {
+         return node->prev->children[a].Q > node->prev->children[b].Q;
+       });
 }
 
 Node *Mariai::get_most_visited_child(Node *node) {
   int max = -1;
-  Node *most_visited= NULL;
-  for (auto &node : node->children) {
-    if (node.visit > max && node.Q > 0) {
-      max = node.visit;
-      most_visited= &node;
+  Node *most_visited = NULL;
+  for (auto &child : node->children) {
+    if (child.visit > max && child.Q > 0) {
+      max = child.visit;
+      most_visited = &child;
     }
   }
   return most_visited;
@@ -99,17 +80,17 @@ void Mariai::init_tree(Node *root, Board &b) { expand_node(root, b); }
 void Mariai::run_mcts(Node *root, Board &b) {
   for (int n = 0; n < PLAYOUTS; n++) {
     Node *head = NULL;
-    Board vg = b;
+    Board vb = b;
     bool quit = false;
 
     // TREE POLICY: selection & expansion
-    tie(quit, head) = select_path(root, vg);
+    tie(quit, head) = select_path(root, vb);
 
     // DEFAULT POLICY: playout using Monte-Carlo method
-    fast_rollout(vg, quit);
+    fast_rollout(vb, quit);
 
     // BACKUP: backpropagation
-    quit = backpropagation(head, root, vg.whose_turn());
+    quit = backpropagation(head, root, vb.whose_turn());
     if (quit)
       return;
     else
@@ -118,26 +99,26 @@ void Mariai::run_mcts(Node *root, Board &b) {
   }
 }
 
-tuple<bool, Node *> Mariai::select_path(Node *node, Board &vg) {
+tuple<bool, Node *> Mariai::select_path(Node *node, Board &vb) {
   // TREE POLICY: selection
   while (!node->leaf) {
     node = &node->children[node->children_iQ[0]];
-    if (move_check_quit_vg(node, vg))
+    if (move_and_check_quit(node, vb))
       return make_tuple(true, node);
   }
 
   // TREE POLICY: expansion
   if (is_expandable(node)) {
-    expand_node(node, vg);
+    expand_node(node, vb);
     node = &node->children[node->children_iQ[0]];
-    if (move_check_quit_vg(node, vg))
+    if (move_and_check_quit(node, vb))
       return make_tuple(true, node);
   }
   return make_tuple(false, node);
 }
 
-void Mariai::expand_node(Node *node, Board &vg) {
-  Board g = vg;
+void Mariai::expand_node(Node *node, Board &vb) {
+  Board g = vb;
   gen_candy(g);
   uint8_t node_index = 0;
   for (auto q : candy) {
@@ -151,18 +132,18 @@ void Mariai::insert_node(Node *node, Coords q, Stone s) {
   node->children.push_back(Node(node, q, s));
 }
 
-void Mariai::fast_rollout(Board &vg, bool quit) {
+void Mariai::fast_rollout(Board &vb, bool quit) {
   while (!quit) {
     int x, y;
     while (1) {
-      x = random_move(vg, true);
-      y = random_move(vg, false);
-      if (!vg.make_move(x, y))
+      x = RandomMove(vb, true);
+      y = RandomMove(vb, false);
+      if (!vb.make_move(x, y))
         break;
     }
-    quit = vg.check_quit(x, y);
+    quit = vb.check_quit(x, y);
     if (!quit)
-      vg.toggle_turn();
+      vb.toggle_turn();
   }
 }
 
@@ -175,7 +156,7 @@ bool Mariai::backpropagation(Node *node, Node *root, Stone turn) {
     if (turn == node->turn)
       node->win++;
     node->Q = calc_ucb(node);
-    sort_children_index_by_Q(node);
+    sort_children_by_Q(node);
     node = node->prev;
   }
   return false;
@@ -185,14 +166,14 @@ bool Mariai::is_expandable(Node *node) {
   return node->leaf && node->visit >= BRANCHING;
 }
 
-bool Mariai::move_check_quit_vg(Node *node, Board &vg) {
-  Coords q = node->grd;
+bool Mariai::move_and_check_quit(Node *node, Board &vb) {
+  Coords q = node->coords;
   int x, y;
   tie(x, y) = q;
-  vg.make_move(x, y);
-  if (vg.check_quit(x, y))
+  vb.make_move(x, y);
+  if (vb.check_quit(x, y))
     return true;
-  vg.toggle_turn();
+  vb.toggle_turn();
   return false;
 }
 
@@ -209,7 +190,7 @@ Coords Mariai::pick_best(Node *node) {
   gb()->eB =
       (best->turn == BLACK) ? 100 * winning_prob : 100 * (1 - winning_prob);
   gb()->eW = 100 - gb()->eB;
-  return best->grd;
+  return best->coords;
 }
 
 void Mariai::print_tree(Node *node, int set_width, ofstream &fout) {
@@ -229,7 +210,7 @@ void Mariai::print_tree(Node *node, int set_width, ofstream &fout) {
   }
   if (head->Q > -2) {
     fout << setw(set_width) << "[";
-    fout << "(" << get<0>(head->grd) << ", " << get<1>(head->grd) << ", "
+    fout << "(" << get<0>(head->coords) << ", " << get<1>(head->coords) << ", "
          << color << "), "
          << "Q: " << head->Q << ", "
          << "w: " << head->win << ", "
@@ -237,7 +218,11 @@ void Mariai::print_tree(Node *node, int set_width, ofstream &fout) {
          << "\n";
   }
   if (!head->leaf) {
-    vector<size_t> indices = sort_icV(head);
+    vector<size_t> indices(node->children.size());
+    iota(indices.begin(), indices.end(), 0);
+    sort(indices.begin(), indices.end(), [&](const size_t a, const size_t b) {
+      return node->children[a].visit > node->children[b].visit;
+    });
     for (auto i : indices) {
       print_tree(&head->children[i], set_width + 3, fout);
     }
@@ -296,8 +281,6 @@ void Mariai::find_pattern_inline(Board &b, int i, int j, int di, int dj,
     find_pattern_each(b, i, j, di, dj, "=|||_?");
     find_pattern_each(b, i, j, di, dj, "|===_?");
     find_pattern_each(b, i, j, di, dj, "|_|?");
-    find_pattern_each(b, i, j, di, dj, "=|?_");
-    find_pattern_each(b, i, j, di, dj, "|=?_");
 
     // find_pattern_each(b, i, j, di, dj, "=|?_");
     // find_pattern_each(b, i, j, di, dj, "|=?|");

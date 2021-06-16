@@ -85,13 +85,13 @@ void Game::play_game() {
   bool quit = false;
   int stop = 0;
   Player player;
-  Coords grd;
+  Coords coords;
   Sofiai sofia(gb());
   Mariai maria(gb(), gd());
   gd()->init_screen_win(gb());
 
   while (!quit) {
-    grd = make_tuple(-1, -1);
+    coords = make_tuple(-1, -1);
     if (gb()->whose_turn() == BLACK) {
       player = gb()->get_player(BLACK);
     } else {
@@ -100,23 +100,23 @@ void Game::play_game() {
 
     // get next move: who plays
     if (player == HUMAN) {
-      grd = gd()->get_move();
-      if (get<0>(grd) == -1)
+      coords = gd()->get_move();
+      if (get<0>(coords) == -1)
         return;
     }
     if (player == SOFIAI) {
-      grd = sofia.next_move();
+      coords = sofia.next_move();
       if (!auto_play)
         gd()->pause_auto_play();
     }
     if (player == MARIAI) {
-      grd = maria.next_move();
+      coords = maria.next_move();
       if (!auto_play)
         gd()->pause_auto_play();
     }
 
     // when missed next move
-    if (get<0>(grd) == -1) {
+    if (get<0>(coords) == -1) {
       gd()->wipe_out_msg();
       gd()->dump_msg(
           "Fatal error occurred. next move not found. Press q to exit");
@@ -124,7 +124,7 @@ void Game::play_game() {
       return;
     }
 
-    stop = gb()->make_move(get<0>(grd), get<1>(grd));
+    stop = gb()->make_move(get<0>(coords), get<1>(coords));
     Board b = *gb();
 
 #if PRINT_CANDY
@@ -138,9 +138,9 @@ void Game::play_game() {
     b.toggle_turn();
 #endif
 
-    gd()->update_screen(stop, get<1>(grd), 2 * get<0>(grd), &b);
+    gd()->update_screen(stop, get<1>(coords), 2 * get<0>(coords), &b);
     if (!stop) {
-      quit = gb()->check_quit(get<0>(grd), get<1>(grd));
+      quit = gb()->check_quit(get<0>(coords), get<1>(coords));
       gb()->toggle_turn();
     }
   }
