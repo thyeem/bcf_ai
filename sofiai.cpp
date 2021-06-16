@@ -76,7 +76,7 @@ MinimaxNode Sofiai::minimax(Board b, int x, int y, int depth, bool is_maximizer,
     }
 
     // evaluate the state when the game is not over
-    if (depth == SOFIAI_DEPTH) {
+    if (depth == MINIMAX_PLY) {
       bestval = eval_state(b, depth);
       return make_tuple(bestval, x, y);
     }

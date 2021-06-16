@@ -129,9 +129,9 @@ void Draw::dump_score(Board *b) {
   printw(" [%s]: %d", b->get_nickname(WHITE).c_str(), b->get_score(WHITE));
 }
 
-void Draw::dump_progress(float pct) {
-  int val = (int)(pct * 100);
-  int lp = (int)(pct * PBWIDTH);
+void Draw::dump_progress(float progress) {
+  int val = (int)(progress * 100);
+  int lp = (int)(progress * PBWIDTH);
   int rp = (int)PBWIDTH - lp;
   if (val >= 100) {
     val = 100;

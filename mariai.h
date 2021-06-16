@@ -17,9 +17,6 @@ public:
   void find_pattern_inline(Board &b, int i, int j, int di, int dj, size_t size);
   bool find_pattern_each(Board &b, int i, int j, int di, int dj, string pt);
   bool match_stones(Board &b, char ch, int i, int j);
-  bool on_main_axis(int x, int y, int di, int dj);
-  bool on_crux_wing(int x, int y, int di, int dj);
-  bool on_perp_wing(int x, int y, int di, int dj);
 
   vector<size_t> sort_icV(Node *node);
   void sort_icQ(Node *node);
@@ -34,12 +31,11 @@ public:
   void insert_node(Node *node, Coords q, Stone s);
   bool is_expandable(Node *node);
   bool move_check_quit_vg(Node *node, Board &vg);
-  void prune_tree(Node *node);
   void print_tree(Node *node, int set_width, ofstream &fout);
   Coords pick_best(Node *node);
   Coords next_move();
   void show_progress();
-  void dump_progress(float pct);
+  void dump_progress(float progress);
 
 public:
   VecCoords candy;
@@ -47,7 +43,6 @@ public:
 private:
   Board *p_board;
   Draw *p_draw;
-  mt19937_64 mt64_rand;
   int it;
 };
 

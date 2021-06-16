@@ -1,10 +1,11 @@
 #include "mariai.h"
+#include <random>
 
 Mariai::Mariai(Board *b, Draw *d) : it(0) {
   p_board = b;
   p_draw = d;
-  random_device rd;
-  mt19937_64 mt64_rand(rd());
+  mt19937_64 mt64_rand(random_device{}());
+  g_lehmer64_state = mt64_rand();
 }
 
 Mariai::~Mariai() {}
@@ -15,9 +16,9 @@ Draw *Mariai::gd() { return p_draw; }
 
 int Mariai::random_move(Board &b, bool is_move_x) {
   if (is_move_x) {
-    return (int)(mt64_rand() % (b.sup_x - b.inf_x + 1)) + b.inf_x;
+    return (int)random_coords(b.inf_x, b.sup_x);
   } else {
-    return (int)(mt64_rand() % (b.sup_y - b.inf_y + 1)) + b.inf_y;
+    return (int)random_coords(b.inf_y, b.sup_y);
   }
 }
 
@@ -71,7 +72,7 @@ Node *Mariai::get_maxV_child(Node *node) {
 Coords Mariai::next_move() {
   if (gb()->moves == 0)
     return make_tuple(N / 2, N / 2);
-  Node root(NULL, make_tuple(-1, -1), EMPTY, 0);
+  Node root(NULL, make_tuple(-1, -1), EMPTY);
   Node *roof = &root;
   it = 0;
 
@@ -146,7 +147,7 @@ void Mariai::expand_node(Node *node, Board &vg) {
 }
 
 void Mariai::insert_node(Node *node, Coords q, Stone s) {
-  node->child.push_back(Node(node, q, s, node->depth + 1));
+  node->child.push_back(Node(node, q, s));
 }
 
 void Mariai::fast_rollout(Board &vg, bool quit) {
@@ -180,8 +181,7 @@ bool Mariai::backpropagation(Node *node, Node *roof, Stone turn) {
 }
 
 bool Mariai::is_expandable(Node *node) {
-  return node->leaf && (node->visit >= BRANCHING) &&
-         (node->depth < MARIAI_DEPTH);
+  return node->leaf && node->visit >= BRANCHING;
 }
 
 bool Mariai::move_check_quit_vg(Node *node, Board &vg) {
@@ -248,7 +248,7 @@ void Mariai::print_tree(Node *node, int set_width, ofstream &fout) {
 void Mariai::gen_candy(Board &b) {
   candy.clear();
   analyze_pattern(b, 1);
-  if (candy.size() < 15)
+  if (!candy.size())
     analyze_pattern(b, 0);
 }
 
@@ -285,100 +285,53 @@ void Mariai::analyze_pattern(Board &b, size_t size) {
 void Mariai::find_pattern_inline(Board &b, int i, int j, int di, int dj,
                                  size_t size) {
   if (size == 0) {
-    find_pattern_each(b, i, j, di, dj, "?=a");
+    find_pattern_each(b, i, j, di, dj, "*?");
+    find_pattern_each(b, i, j, di, dj, "*_?");
   } else {
-    find_pattern_each(b, i, j, di, dj, "sa");
-    find_pattern_each(b, i, j, di, dj, "xooo_a");
-    find_pattern_each(b, i, j, di, dj, "oxxx_a");
-    // find_pattern_each(b, i, j, di, dj, "s_a");
-    // find_pattern_each(b, i, j, di, dj, "ssa");
-    // find_pattern_each(b, i, j, di, dj, "sasa");
-    // find_pattern_each(b, i, j, di, dj, "sas");
-    // find_pattern_each(b, i, j, di, dj, "?=a");
+    find_pattern_each(b, i, j, di, dj, "=?=");
+    find_pattern_each(b, i, j, di, dj, "|?|");
+    find_pattern_each(b, i, j, di, dj, "==?");
+    find_pattern_each(b, i, j, di, dj, "||?");
+    find_pattern_each(b, i, j, di, dj, "|_|?");
+    find_pattern_each(b, i, j, di, dj, "=|||_?");
+    find_pattern_each(b, i, j, di, dj, "|===_?");
   }
 }
 
 bool Mariai::find_pattern_each(Board &b, int i, int j, int di, int dj,
                                string pt) {
   int size = pt.length();
-  char turn = (b.whose_turn() == BLACK) ? 'x' : 'o';
-  char enemy = (turn == 'x') ? 'o' : 'x';
   for (int s = 0; s < size; s++) {
     int x = i + s * di;
     int y = j + s * dj;
-    char stone = (pt[s] == '?') ? turn : (pt[s] == '!') ? enemy : pt[s];
     if (!b.in_range(x, y))
       return false;
-    if (!match_stones(b, stone, x, y))
+    if (!match_stones(b, pt[s], x, y))
       return false;
-    if (stone == '=') {
-      if (di * dj != 0)
-        return false;
-      if (!(match_stones(b, enemy, x - 1, y - 1) ||
-            match_stones(b, enemy, x - 1, y + 0) ||
-            match_stones(b, enemy, x - 1, y + 1) ||
-            match_stones(b, enemy, x + 0, y - 1) ||
-            match_stones(b, enemy, x + 0, y + 1) ||
-            match_stones(b, enemy, x + 1, y - 1) ||
-            match_stones(b, enemy, x + 1, y + 0) ||
-            match_stones(b, enemy, x + 1, y + 1))) {
-        return false;
-      }
-    }
   }
-  // piling up candies
+  // collecting candies
   for (int s = 0; s < size; s++) {
     int x = i + s * di;
     int y = j + s * dj;
-    if (pt[s] == 'a')
+    if (pt[s] == '?')
       candy.push_back(make_tuple(x, y));
   }
   return true;
 }
 
-bool Mariai::on_main_axis(int x, int y, int di, int dj) {
-  if (di == 0 && x == 0)
-    return true;
-  if (dj == 0 && y == 0)
-    return true;
-  if (di == -dj && x == -y)
-    return true;
-  if (di == dj && x == y)
-    return true;
-  return false;
-}
-
-bool Mariai::on_crux_wing(int x, int y, int di, int dj) {
-  if (di * dj == 0 && x * y != 0)
-    return true;
-  if (di * dj != 0 && x * y == 0)
-    return true;
-  return false;
-}
-
-bool Mariai::on_perp_wing(int x, int y, int di, int dj) {
-  if (di * dj == 0 && x * y == 0)
-    return true;
-  if (di * dj != 0 && x * y != 0)
-    return true;
-  return false;
-}
-
 bool Mariai::match_stones(Board &b, char ch, int i, int j) {
   switch (ch) {
-  case 's':
+  case '*':
     return (b.get_stone(i, j) != EMPTY) ? true : false;
     break;
-  case 'a':
-  case '=':
   case '_':
+  case '?':
     return (b.get_stone(i, j) == EMPTY) ? true : false;
     break;
-  case 'x':
-    return (b.get_stone(i, j) == BLACK) ? true : false;
-    break;
-  case 'o':
-    return (b.get_stone(i, j) == WHITE) ? true : false;
+  case '=':
+    return (b.get_stone(i, j) == b.whose_turn()) ? true : false;
+  case '|':
+    return (b.get_stone(i, j) == b.last_turn()) ? true : false;
     break;
   default:
     return false;
