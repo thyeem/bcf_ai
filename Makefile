@@ -20,7 +20,7 @@ $(TARGET): $(OBJ)
 
 
 
-SRC=api_sofia.cpp board.cpp sofiai.cpp
+SRC=call_sofiai.cpp board.cpp sofiai.cpp
 OBJ=$(SRC:%.cpp=%.o)
 DEP=$(OBJ:%.o=%.d)
 
@@ -33,7 +33,7 @@ sofia: $(OBJ)
 
 
 
-SRC=api_maria.cpp board.cpp mariai.cpp draw.cpp
+SRC=call_mariai.cpp board.cpp mariai.cpp draw.cpp
 OBJ=$(SRC:%.cpp=%.o)
 DEP=$(OBJ:%.o=%.d)
 

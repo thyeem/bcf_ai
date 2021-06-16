@@ -4,8 +4,8 @@
 Mariai::Mariai(Board *b, Draw *d) : it(0) {
   p_board = b;
   p_draw = d;
-  mt19937_64 mt64_rand(random_device{}());
-  g_lehmer64_state = mt64_rand();
+  fastrand_seed();
+	lehmer64_seed();
 }
 
 Mariai::~Mariai() {}

@@ -75,7 +75,6 @@ public:
   Coords grd;
   Stone turn;
   bool leaf;
-  uint8_t depth;
   vector<Node> child;
   vector<uint8_t> icQ;
 };
@@ -86,14 +85,26 @@ template <typename T> void uniq_vec(vector<T> &vec) {
 }
 
 static __uint128_t g_lehmer64_state;
+static __uint64_t g_fastrand_state;
 
-static inline void lehmer64_seed(uint64_t seed) {
-  g_lehmer64_state = seed << 1 | 1;
+static inline void lehmer64_seed() {
+  mt19937_64 mt64_rand(random_device{}());
+  g_lehmer64_state = mt64_rand() << 1 | 1;
 }
 
 static inline uint64_t lehmer64() {
   g_lehmer64_state *= UINT64_C(0xda942042e4dd58b5);
   return g_lehmer64_state >> 64;
+}
+
+static inline void fastrand_seed() {
+  mt19937_64 mt64_rand(random_device{}());
+  g_fastrand_state = mt64_rand();
+}
+
+static inline uint64_t fastrand() {
+  g_fastrand_state = (214013 * g_fastrand_state + 2531011);
+  return (g_fastrand_state >> 16) & 0x7FFF;
 }
 
 static inline uint64_t random_coords(uint8_t inf, uint8_t sup) {
