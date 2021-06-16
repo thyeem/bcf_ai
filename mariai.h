@@ -19,8 +19,8 @@ public:
   bool match_stones(Board &b, char ch, int i, int j);
 
   vector<size_t> sort_icV(Node *node);
-  void sort_icQ(Node *node);
-  Node *get_maxV_child(Node *node);
+  void sort_children_index_by_Q(Node *node);
+  Node *get_most_visited_child(Node *node);
   float calc_ucb(Node *node);
   void init_tree(Node *roof, Board &b);
   void run_mcts(Node *roof, Board &b);

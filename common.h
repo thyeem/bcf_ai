@@ -75,8 +75,8 @@ public:
   Coords grd;
   Stone turn;
   bool leaf;
-  vector<Node> child;
-  vector<uint8_t> icQ;
+  vector<Node> children;
+  vector<uint8_t> children_iQ;
 };
 
 template <typename T> void uniq_vec(vector<T> &vec) {
