@@ -118,7 +118,7 @@ bool Board::check_quit(int x, int y) {
 
 bool Board::is_nstones_made(int x, int y, int npi_over_four, int n) {
   // npi_over_four in Z/4Z = {0, 1, 2, 3}
-  // meaning the angle of n * pi/4 with the line
+  // meaning the angle of n * pi/4 with x-axis
 
   switch (npi_over_four) {
   case 0:
@@ -164,7 +164,8 @@ bool Board::check_3_3(int x, int y) {
 
 bool Board::is_nstones_made_open(int x, int y, int npi_over_four, int n) {
   // npi_over_four in Z/4Z = {0, 1, 2, 3}
-  // meaning the angle of n * pi/4 with the line
+  // meaning the angle of n * pi/4 with x-axis
+
   int fst, snd;
   switch (npi_over_four) {
   case 0:
@@ -298,8 +299,8 @@ void Board::write_board(string file) {
   fout.close();
 }
 
-void Board::print_board(bool dump_candy) {
-  if (dump_candy) {
+void Board::print_board(VecCoords candy, bool print_candy) {
+  if (print_candy) {
     for (auto q : candy) {
       int i = get<0>(q);
       int j = get<1>(q);
@@ -321,7 +322,7 @@ void Board::print_board(bool dump_candy) {
     for (int j = 0; j < N; j++) {
       if (board[i][j] == CANDY) {
 
-        cout << TC_GREEN << "+" << TC_RESET << " ";
+        cout << TC_GREEN << "-" << TC_RESET << " ";
 
       } else if (is_last_move(i, j)) {
 

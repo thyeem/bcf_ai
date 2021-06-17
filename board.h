@@ -29,7 +29,7 @@ public:
 	bool is_nstones_made_open(int x, int y, int npi_over_four, int n);
   void bite_move(int x, int y);
   void bite_move_towards(int x, int y, int dx, int dy);
-  void print_board(bool dump_candy);
+  void print_board(VecCoords candy, bool print_candy);
   void read_board(string file);
   void write_board(string file);
 
@@ -52,7 +52,6 @@ public:
 	int sup_y;
   float eB;
   float eW;
-  VecCoords candy;
 };
 
 #endif

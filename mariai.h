@@ -29,7 +29,7 @@ public:
   ~Mariai();
   Board *gb();
   Draw *gd();
-  int RandomMove(Board &b, bool is_move_x);
+  int random_move(Board &b, bool is_move_x);
   float calc_ucb(const Node *node);
   void sort_children_by_Q(Node *node);
   Node *get_most_visited_child(Node *node);
@@ -47,25 +47,12 @@ public:
   Coords next_move();
   void show_progress();
   void dump_progress(float progress);
-  void gen_candy(Board &b);
-  void refine_candy(Board &b);
-  void analyze_pattern(Board &b, size_t size);
-  void find_pattern_inline(Board &b, int i, int j, int di, int dj, size_t size);
-  bool find_pattern_each(Board &b, int i, int j, int di, int dj, string pt);
-  bool match_stones(Board &b, char ch, int i, int j);
-
-public:
-  VecCoords candy;
+  VecCoords gen_candy(Board &b);
 
 private:
   Board *p_board;
   Draw *p_draw;
   int it;
 };
-
-template <typename T> void uniq_vec(vector<T> &vec) {
-  sort(vec.begin(), vec.end());
-  vec.erase(unique(vec.begin(), vec.end()), vec.end());
-}
 
 #endif
