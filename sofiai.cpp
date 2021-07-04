@@ -23,20 +23,20 @@ void Sofiai::set_coeff() {
   lookup_coeff["_xxxxa"] = -3.0e6;
 
   // move priority
-  lookup_priority["_ooa"] = 3;
-  lookup_priority["oooa"] = 2;
   lookup_priority["ooooa"] = 1;
+  lookup_priority["xxxxa"] = 1;
+  lookup_priority["oooa"] = 2;
+  lookup_priority["xxxa"] = 2;
+  lookup_priority["_ooa"] = 3;
   lookup_priority["oxxa"] = 3;
   lookup_priority["_xxa"] = 3;
-  lookup_priority["xxxa"] = 2;
-  lookup_priority["xxxxa"] = 1;
   lookup_priority["xooa"] = 3;
   lookup_priority["oao"] = 4;
   lookup_priority["xax"] = 4;
   lookup_priority["ooo_a"] = 5;
   lookup_priority["xxx_a"] = 5;
-  lookup_priority["_x_xa"] = 6;
   lookup_priority["_o_oa"] = 6;
+  lookup_priority["_x_xa"] = 6;
 }
 
 Board *Sofiai::gb() { return p_board; }

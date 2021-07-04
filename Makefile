@@ -6,7 +6,7 @@ TARGET=bcf_ai
 
 .PHONY: all sofia maria sofimarie clean
 
-SRC=main.cpp board.cpp game.cpp sofiai.cpp mariai.cpp draw.cpp
+SRC=main.cpp board.cpp game.cpp sofiai.cpp mariai.cpp draw.cpp pattern.cpp
 OBJ=$(SRC:%.cpp=%.o)
 DEP=$(OBJ:%.o=%.d)
 

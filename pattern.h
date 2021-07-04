@@ -10,11 +10,13 @@ public:
   Pattern();
   ~Pattern();
 
-  VecCoords find_candidates(Board &b, size_t size);
-  void find_pattern_inline(Board &b, int i, int j, int di, int dj, size_t size);
-  bool find_pattern_each(Board &b, int i, int j, int di, int dj, string pt);
+  VecCoords find_candidates(Board &b, VecCoords &candy, size_t size);
+  void find_pattern_inline(Board &b, VecCoords &candy, int i, int j, int di,
+                           int dj, size_t size);
+  bool find_pattern_each(Board &b, VecCoords &candy, int i, int j, int di,
+                         int dj, string pt);
   bool match_stones(Board &b, char ch, int i, int j);
-  void refine_candy(VecCoords *candy, Board &b);
+  void refine_candy(VecCoords &candy, Board &b);
 };
 
 template <typename T> void uniq_vec(vector<T> &vec) {

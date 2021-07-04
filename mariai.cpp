@@ -230,9 +230,10 @@ void Mariai::print_tree(Node *node, int set_width, ofstream &fout) {
 }
 
 VecCoords Mariai::gen_candy(Board &b) {
+  Pattern p;
   VecCoords candy;
-	Pattern p;
-  candy = p.find_candidates(b, 1);
+  p.find_candidates(b, candy, 1);
   if (!candy.size())
-    p.find_candidates(b, 0);
+    p.find_candidates(b, candy, 0);
+  return candy;
 }

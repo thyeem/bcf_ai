@@ -1,4 +1,5 @@
 #include "game.h"
+#include "common.h"
 
 Game::Game() : auto_play(true) {
   p_board = new Board;
@@ -129,8 +130,8 @@ void Game::play_game() {
 
 #if PRINT_CANDY
     b.toggle_turn();
-    maria.gen_candy(b);
-    for (auto q : maria.candy) {
+    VecCoords candy = maria.gen_candy(b);
+    for (auto q : candy) {
       int i, j;
       tie(i, j) = q;
       b.set_stone(i, j, CANDY);
