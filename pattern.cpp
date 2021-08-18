@@ -27,8 +27,7 @@ VecCoords Pattern::find_candidates(Board &b, VecCoords &candy, size_t size) {
 void Pattern::find_pattern_inline(Board &b, VecCoords &candy, int i, int j,
                                   int di, int dj, size_t size) {
   if (size == 0) {
-    find_pattern_each(b, candy, i, j, di, dj, "*?_");
-    find_pattern_each(b, candy, i, j, di, dj, "*_?_");
+    find_pattern_each(b, candy, i, j, di, dj, "*?");
   } else {
     find_pattern_each(b, candy, i, j, di, dj, "=?=");
     find_pattern_each(b, candy, i, j, di, dj, "|?|");
@@ -37,9 +36,6 @@ void Pattern::find_pattern_inline(Board &b, VecCoords &candy, int i, int j,
     find_pattern_each(b, candy, i, j, di, dj, "=|||_?");
     find_pattern_each(b, candy, i, j, di, dj, "|===_?");
     find_pattern_each(b, candy, i, j, di, dj, "|_|?");
-
-    // find_pattern_each(b, i, j, di, dj, "=|?_");
-    // find_pattern_each(b, i, j, di, dj, "|=?|");
   }
 }
 
