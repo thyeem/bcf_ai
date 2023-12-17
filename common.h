@@ -20,14 +20,15 @@
 #include <vector>
 using namespace std;
 
-#define N 19
+#define N 13
 #define GOAL 5
 #define WP 10
 #define BCF 1
-#define PLAYOUTS 1200000
-#define BRANCHING 5
-#define UCB_C 1.414142135624
-#define UCB_POW 0.5
+#define PLAYOUTS 1000000
+#define BRANCHING 10
+#define MCTS_PLY 20
+#define UCB_C 1.0
+#define UCB_POW 1.0
 #define EARLY_CUT (PLAYOUTS / 3)
 
 #define PRINT_CANDY 0
@@ -38,7 +39,7 @@ using namespace std;
 #define MATCH_NUM 200
 #define PUT_BOARD 1
 
-#define PBWIDTH 33
+#define PBWIDTH 27
 #define PBSTR "||||||||||||||||||||||||||||||||||||||||"
 #define LINE_BUFFER (PLAYOUTS / 7)
 #define INF 1.0e7

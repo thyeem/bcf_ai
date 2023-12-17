@@ -61,7 +61,7 @@ void Draw::wipe_out_prg() {
   char blank[50];
   memset(blank, ' ', sizeof blank - 1);
   blank[sizeof blank - 1] = '\0';
-  move((LINES - N) / 2 + 21, (COLS - 2 * N) / 2);
+  move((LINES - N) / 2 + (N + 2), (COLS - 2 * N) / 2);
   printw("%s", blank);
   refresh();
 }
@@ -138,7 +138,7 @@ void Draw::dump_progress(float progress) {
     lp = PBWIDTH;
     rp = 0;
   }
-  move((LINES - N) / 2 + 21, (COLS - 2 * N) / 2);
+  move((LINES - N) / 2 + (N + 2), (COLS - 2 * N) / 2);
   printw("[%.*s%*s] %3d%%", lp, PBSTR, rp, "", val);
   refresh();
   wrefresh(win);

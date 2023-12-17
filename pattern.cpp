@@ -33,8 +33,8 @@ void Pattern::find_pattern_inline(Board &b, VecCoords &candy, int i, int j,
     find_pattern_each(b, candy, i, j, di, dj, "|?|");
     find_pattern_each(b, candy, i, j, di, dj, "==?");
     find_pattern_each(b, candy, i, j, di, dj, "||?");
-    find_pattern_each(b, candy, i, j, di, dj, "=|||_?");
-    find_pattern_each(b, candy, i, j, di, dj, "|===_?");
+    find_pattern_each(b, candy, i, j, di, dj, "=_?");
+    find_pattern_each(b, candy, i, j, di, dj, "|_?");
     find_pattern_each(b, candy, i, j, di, dj, "|_|?");
   }
 }

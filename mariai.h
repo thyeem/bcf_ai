@@ -6,8 +6,8 @@
 
 class Node {
 public:
-  Node(Node *p, Coords g, Stone s)
-      : Q(100.), win(0), visit(0), prev(p), coords(g), turn(s), leaf(true) {}
+  Node(Node *p, Coords g, Stone s, int d)
+      : Q(100.), win(0), visit(0), prev(p), coords(g), turn(s), depth(d), leaf(true) {}
 
   ~Node() {}
 
@@ -18,6 +18,7 @@ public:
   Node *prev;
   Coords coords;
   Stone turn;
+  int depth;
   bool leaf;
   vector<Node> children;
   vector<uint8_t> children_iQ;

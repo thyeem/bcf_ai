@@ -23,11 +23,11 @@ int Mariai::random_move(Board &b, bool is_move_x) {
 }
 
 float Mariai::calc_ucb(const Node *node) {
-  const float log_playouts = log(PLAYOUTS);
-  if (node->prev == NULL)
-    return 1;
-  return (1. * node->win / node->visit) +
-         UCB_C * pow(log_playouts / node->visit, UCB_POW);
+    if (node->prev == NULL) return 1;
+    static const float n = log(PLAYOUTS);
+    int x = node->children.size();
+    float c = 0.9 + 1 / (5 + exp(-0.2 * (x - 40)));
+    return (1. * node->win / node->visit) + c * pow(n / node->visit, c);
 }
 
 void Mariai::sort_children_by_Q(Node *node) {
@@ -55,7 +55,7 @@ Node *Mariai::get_most_visited_child(Node *node) {
 Coords Mariai::next_move() {
   if (gb()->moves == 0)
     return make_tuple(N / 2, N / 2);
-  Node root(NULL, make_tuple(-1, -1), EMPTY);
+  Node root(NULL, make_tuple(-1, -1), EMPTY, 0);
   it = 0;
 
   // Init tree: forced first expansion
@@ -129,7 +129,7 @@ void Mariai::expand_node(Node *node, Board &vb) {
 }
 
 void Mariai::insert_node(Node *node, Coords q, Stone s) {
-  node->children.push_back(Node(node, q, s));
+    node->children.push_back(Node(node, q, s, node->depth + 1));
 }
 
 void Mariai::fast_rollout(Board &vb, bool quit) {
@@ -163,7 +163,7 @@ bool Mariai::backpropagation(Node *node, Node *root, Stone turn) {
 }
 
 bool Mariai::is_expandable(Node *node) {
-  return node->leaf && node->visit >= BRANCHING;
+  return node->leaf && node->visit >= BRANCHING && node->depth <= MCTS_PLY;
 }
 
 bool Mariai::move_and_check_quit(Node *node, Board &vb) {
