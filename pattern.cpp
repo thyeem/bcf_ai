@@ -5,38 +5,31 @@ Pattern::Pattern() {}
 
 Pattern::~Pattern() {}
 
-VecCoords Pattern::find_candidates(Board &b, VecCoords &candy, size_t size) {
+VecCoords Pattern::find_candidates(Board &b, VecCoords &candy) {
   for (int i = 0; i < N; i++) {
     for (int j = 0; j < N; j++) {
       if (b.get_stone(i, j) == EMPTY)
         continue;
-      find_pattern_inline(b, candy, i, j, 1, 0, size);
-      find_pattern_inline(b, candy, i, j, -1, 0, size);
-      find_pattern_inline(b, candy, i, j, 0, 1, size);
-      find_pattern_inline(b, candy, i, j, 0, -1, size);
-      find_pattern_inline(b, candy, i, j, 1, 1, size);
-      find_pattern_inline(b, candy, i, j, 1, -1, size);
-      find_pattern_inline(b, candy, i, j, -1, 1, size);
-      find_pattern_inline(b, candy, i, j, -1, -1, size);
+      find_pattern_inline(b, candy, i, j, 1, 0);
+      find_pattern_inline(b, candy, i, j, -1, 0);
+      find_pattern_inline(b, candy, i, j, 0, 1);
+      find_pattern_inline(b, candy, i, j, 0, -1);
+      find_pattern_inline(b, candy, i, j, 1, 1);
+      find_pattern_inline(b, candy, i, j, 1, -1);
+      find_pattern_inline(b, candy, i, j, -1, 1);
+      find_pattern_inline(b, candy, i, j, -1, -1);
     }
   }
   refine_candy(candy, b);
   return candy;
 }
 
-void Pattern::find_pattern_inline(Board &b, VecCoords &candy, int i, int j,
-                                  int di, int dj, size_t size) {
-  if (size == 0) {
-    find_pattern_each(b, candy, i, j, di, dj, "*?");
-  } else {
-    find_pattern_each(b, candy, i, j, di, dj, "=?=");
-    find_pattern_each(b, candy, i, j, di, dj, "|?|");
-    find_pattern_each(b, candy, i, j, di, dj, "==?");
-    find_pattern_each(b, candy, i, j, di, dj, "||?");
-    find_pattern_each(b, candy, i, j, di, dj, "=_?");
-    find_pattern_each(b, candy, i, j, di, dj, "|_?");
-    find_pattern_each(b, candy, i, j, di, dj, "|_|?");
-  }
+void Pattern::find_pattern_inline(Board &b, VecCoords &candy,
+                                  int i, int j, int di, int dj) {
+  find_pattern_each(b, candy, i, j, di, dj, "*?");
+  find_pattern_each(b, candy, i, j, di, dj, "|||_?");
+  find_pattern_each(b, candy, i, j, di, dj, "===_?");
+  find_pattern_each(b, candy, i, j, di, dj, "*_?____");
 }
 
 bool Pattern::find_pattern_each(Board &b, VecCoords &candy, int i, int j,

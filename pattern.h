@@ -10,9 +10,9 @@ public:
   Pattern();
   ~Pattern();
 
-  VecCoords find_candidates(Board &b, VecCoords &candy, size_t size);
+  VecCoords find_candidates(Board &b, VecCoords &candy);
   void find_pattern_inline(Board &b, VecCoords &candy, int i, int j, int di,
-                           int dj, size_t size);
+                           int dj);
   bool find_pattern_each(Board &b, VecCoords &candy, int i, int j, int di,
                          int dj, string pt);
   bool match_stones(Board &b, char ch, int i, int j);

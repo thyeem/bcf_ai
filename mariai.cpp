@@ -25,9 +25,7 @@ int Mariai::random_move(Board &b, bool is_move_x) {
 float Mariai::calc_ucb(const Node *node) {
     if (node->prev == NULL) return 1;
     static const float n = log(PLAYOUTS);
-    int x = node->children.size();
-    float c = 0.9 + 1 / (5 + exp(-0.2 * (x - 40)));
-    return (1. * node->win / node->visit) + c * pow(n / node->visit, c);
+    return (1. * node->win / node->visit) + UCB_C * pow(n / node->visit, UCB_POW);
 }
 
 void Mariai::sort_children_by_Q(Node *node) {
@@ -187,8 +185,7 @@ void Mariai::show_progress() {
 Coords Mariai::pick_best(Node *node) {
   Node *best = get_most_visited_child(node);
   float winning_prob = 1. * best->win / best->visit;
-  gb()->eB =
-      (best->turn == BLACK) ? 100 * winning_prob : 100 * (1 - winning_prob);
+  gb()->eB = (best->turn == BLACK) ? 100 * winning_prob : 100 * (1 - winning_prob);
   gb()->eW = 100 - gb()->eB;
   return best->coords;
 }
@@ -232,8 +229,6 @@ void Mariai::print_tree(Node *node, int set_width, ofstream &fout) {
 VecCoords Mariai::gen_candy(Board &b) {
   Pattern p;
   VecCoords candy;
-  p.find_candidates(b, candy, 1);
-  if (!candy.size())
-    p.find_candidates(b, candy, 0);
+  p.find_candidates(b, candy);
   return candy;
 }
